@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<title>NexStoria — Struktur Penuh Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --coral: #ff6b6b; --lavender: #a78bfa; --mint: #06d6a0;
+    --sun: #ffd166; --ink: #1a1a2e; --soft: #6b7a9e;
+    --mist: #f0f4ff; --border: #d4dff7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito', sans-serif; background: #f8faff; color: var(--ink); }
+
+  /* COVER PAGE */
+  .cover {
+    min-height: 100vh;
+    background: linear-gradient(145deg, #1a1a2e 0%, #2d1b69 50%, #1a1a2e 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 3rem 2rem;
+    position: relative; overflow: hidden;
+    page-break-after: always;
+  }
+  .cover::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 20% 30%, rgba(167,139,250,0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255,107,107,0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(255,209,102,0.1) 0%, transparent 60%);
+  }
+  .cover-content { position: relative; z-index: 1; }
+  .cover-logo {
+    font-family: 'Baloo 2', cursive;
+    font-size: 5rem; font-weight: 800;
+    color: white; line-height: 1;
+    text-shadow: 0 4px 30px rgba(167,139,250,0.5);
+  }
+  .cover-logo span { color: var(--lavender); }
+  .cover-tagline {
+    font-size: 1.1rem; color: rgba(255,255,255,0.7);
+    margin-top: 0.5rem; letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .cover-divider {
+    width: 80px; height: 3px;
+    background: linear-gradient(90deg, var(--coral), var(--lavender));
+    margin: 1.5rem auto; border-radius: 2px;
+  }
+  .cover-title {
+    font-size: 1.8rem; font-weight: 800; color: white;
+    margin-bottom: 0.5rem;
+  }
+  .cover-subtitle { font-size: 1rem; color: rgba(255,255,255,0.6); }
+  .cover-badges {
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+    justify-content: center; margin-top: 2rem;
+  }
+  .cover-badge {
+    padding: 6px 16px; border-radius: 20px;
+    font-size: 0.8rem; font-weight: 700;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white; background: rgba(255,255,255,0.08);
+  }
+  .cover-date {
+    position: absolute; bottom: 2rem;
+    font-size: 0.8rem; color: rgba(255,255,255,0.4);
+  }
+
+  /* MAIN */
+  .page { max-width: 900px; margin: 0 auto; padding: 3rem 2rem; }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 3rem;
+    background: white;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(26,26,46,0.05);
+  }
+  .section-head {
+    padding: 1.2rem 1.8rem;
+    display: flex; align-items: center; gap: 1rem;
+    border-bottom: 1.5px solid var(--border);
+  }
+  .sh-coral  { background: linear-gradient(135deg, #fff0f0, #ffe4e4); }
+  .sh-purple { background: linear-gradient(135deg, #f5f3ff, #ede9fe); }
+  .sh-mint   { background: linear-gradient(135deg, #f0fdf8, #d1fae5); }
+  .sh-sun    { background: linear-gradient(135deg, #fffbeb, #fef3c7); }
+  .sh-blue   { background: linear-gradient(135deg, #eff6ff, #dbeafe); }
+  .sh-pink   { background: linear-gradient(135deg, #fdf2f8, #fce7f3); }
+
+  .section-icon { font-size: 1.8rem; }
+  .section-head-text h2 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.2rem; font-weight: 800; color: var(--ink);
+  }
+  .section-head-text p { font-size: 0.8rem; color: var(--soft); margin-top: 2px; }
+  .section-body { padding: 1.5rem 1.8rem; }
+
+  /* VISION BOX */
+  .vision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .vision-card {
+    padding: 1rem 1.2rem; border-radius: 14px;
+    border: 1.5px solid var(--border); background: var(--mist);
+  }
+  .vision-card .vc-label { font-size: 0.72rem; font-weight: 700; color: var(--soft); text-transform: uppercase; letter-spacing: 0.05em; }
+  .vision-card .vc-value { font-size: 0.92rem; font-weight: 700; color: var(--ink); margin-top: 4px; }
+
+  /* USERS */
+  .user-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; }
+  .user-card {
+    text-align: center; padding: 1.2rem 0.8rem;
+    border-radius: 14px; border: 1.5px solid var(--border);
+    background: var(--mist);
+  }
+  .user-card .uc-emoji { font-size: 2rem; display: block; }
+  .user-card .uc-name { font-weight: 700; font-size: 0.82rem; margin-top: 6px; }
+  .user-card .uc-desc { font-size: 0.72rem; color: var(--soft); margin-top: 3px; }
+
+  /* PAGES LIST */
+  .pages-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .page-card {
+    padding: 1.2rem; border-radius: 14px;
+    border: 1.5px solid var(--border); background: var(--mist);
+    position: relative;
+  }
+  .page-card.built { border-color: var(--mint); background: #f0fdf8; }
+  .page-card.planned { border-color: var(--border); }
+  .pc-status {
+    display: inline-block; font-size: 0.68rem; font-weight: 800;
+    padding: 2px 8px; border-radius: 8px; margin-bottom: 6px;
+  }
+  .status-built { background: var(--mint); color: white; }
+  .status-planned { background: var(--sun); color: #78350f; }
+  .pc-title { font-weight: 800; font-size: 0.92rem; }
+  .pc-url { font-size: 0.72rem; color: var(--soft); font-family: monospace; margin-top: 3px; }
+  .pc-features { margin-top: 0.6rem; }
+  .pc-features li {
+    font-size: 0.78rem; color: var(--soft);
+    padding: 2px 0; padding-left: 14px; position: relative;
+    list-style: none;
+  }
+  .pc-features li::before { content: '→'; position: absolute; left: 0; color: var(--lavender); font-size: 0.7rem; }
+
+  /* FEATURES TABLE */
+  .feat-table { width: 100%; border-collapse: collapse; }
+  .feat-table th {
+    background: var(--mist); font-size: 0.78rem; font-weight: 800;
+    padding: 8px 12px; text-align: left;
+    border-bottom: 2px solid var(--border);
+  }
+  .feat-table td {
+    padding: 8px 12px; font-size: 0.8rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .feat-table tr:last-child td { border-bottom: none; }
+  .feat-table tr:hover td { background: var(--mist); }
+  .phase-badge {
+    display: inline-block; font-size: 0.68rem; font-weight: 700;
+    padding: 2px 8px; border-radius: 8px;
+  }
+  .p1 { background: #fee2e2; color: #991b1b; }
+  .p2 { background: #fef3c7; color: #92400e; }
+  .p3 { background: #dbeafe; color: #1e40af; }
+
+  /* FLOW */
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 0; }
+  .flow-step {
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; text-align: center;
+    padding: 10px 14px; border-radius: 12px;
+    background: var(--mist); border: 1.5px solid var(--border);
+    min-width: 80px;
+  }
+  .flow-step .fs-icon { font-size: 1.3rem; }
+  .flow-step .fs-label { font-size: 0.7rem; font-weight: 700; margin-top: 4px; }
+  .flow-arrow { font-size: 1.2rem; color: var(--lavender); padding: 0 4px; }
+
+  /* TECH STACK */
+  .tech-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; }
+  .tech-card {
+    padding: 1rem; border-radius: 12px;
+    border: 1.5px solid var(--border); background: var(--mist);
+    text-align: center;
+  }
+  .tech-card .tc-icon { font-size: 1.6rem; }
+  .tech-card .tc-name { font-weight: 800; font-size: 0.85rem; margin-top: 4px; }
+  .tech-card .tc-role { font-size: 0.72rem; color: var(--soft); }
+
+  /* ROADMAP */
+  .roadmap { display: flex; flex-direction: column; gap: 0; }
+  .rm-item {
+    display: flex; gap: 1rem; padding: 1rem 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .rm-item:last-child { border-bottom: none; }
+  .rm-phase {
+    min-width: 90px; text-align: center;
+    font-weight: 800; font-size: 0.8rem;
+    padding: 4px 0;
+  }
+  .rm-content { flex: 1; }
+  .rm-title { font-weight: 800; font-size: 0.92rem; }
+  .rm-items { font-size: 0.78rem; color: var(--soft); margin-top: 4px; line-height: 1.7; }
+
+  /* COLOR PALETTE */
+  .palette { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  .color-swatch {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 12px; border-radius: 10px;
+    border: 1.5px solid var(--border); background: white;
+    font-size: 0.78rem; font-weight: 700;
+  }
+  .swatch-dot { width: 20px; height: 20px; border-radius: 50%; }
+
+  /* BOTTOM NOTE */
+  .bottom-note {
+    text-align: center; padding: 2rem;
+    background: linear-gradient(135deg, #1a1a2e, #2d1b69);
+    border-radius: 20px; color: white; margin-top: 1rem;
+  }
+  .bn-logo { font-family: 'Baloo 2', cursive; font-size: 2rem; font-weight: 800; }
+  .bn-logo span { color: var(--lavender); }
+  .bn-text { font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 0.5rem; }
+
+  @media print {
+    .cover { min-height: 100vh; }
+    .section { page-break-inside: avoid; }
+  }
+
+  h3 { font-family: 'Baloo 2', cursive; font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--ink); }
+  .divider { border: none; border-top: 1px dashed var(--border); margin: 1.2rem 0; }
+</style>
+</head>
+<body>
+
+<!-- ═══ COVER ═══ -->
+<div class="cover">
+  <div class="cover-content">
+    <div class="cover-logo">Nex<span>Storia</span> 🌏</div>
+    <div class="cover-tagline">Where the Next Generation of Stories Begins.</div>
+    <div class="cover-divider"></div>
+    <div class="cover-title">📋 Dokumen Struktur Penuh Platform</div>
+    <div class="cover-subtitle">Panduan Pembangunan NexStoria — Versi 1.0</div>
+    <div class="cover-badges">
+      <span class="cover-badge">📖 Platform Cerita Kanak-kanak</span>
+      <span class="cover-badge">🎨 Gaya Webtoon</span>
+      <span class="cover-badge">🌏 Cerita Seluruh Dunia</span>
+      <span class="cover-badge">🤖 AI Translate</span>
+      <span class="cover-badge">🇲🇾 Melayu + English</span>
+    </div>
+  </div>
+  <div class="cover-date">Disediakan Mac 2026 · NexStoria Platform Blueprint</div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="page">
+
+  <!-- 1. VISI & MISI -->
+  <div class="section">
+    <div class="section-head sh-purple">
+      <div class="section-icon">🌟</div>
+      <div class="section-head-text">
+        <h2>Visi & Konsep NexStoria</h2>
+        <p>Asas dan identiti platform</p>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="vision-grid">
+        <div class="vision-card">
+          <div class="vc-label">🎯 Misi</div>
+          <div class="vc-value">Platform cerita kanak-kanak bergaya Webtoon yang menyatukan penulis dari seluruh dunia</div>
+        </div>
+        <div class="vision-card">
+          <div class="vc-label">🌏 Skop</div>
+          <div class="vc-value">Global — cerita dari semua negara, semua budaya, semua bahasa</div>
+        </div>
+        <div class="vision-card">
+          <div class="vc-label">🎨 Format</div>
+          <div class="vc-value">Webtoon-style scroll menegak — ilustrasi + teks setiap panel</div>
+        </div>
+        <div class="vision-card">
+          <div class="vc-label">🤖 Teknologi</div>
+          <div class="vc-value">AI Translate automatik untuk semua cerita ke pelbagai bahasa</div>
+        </div>
+        <div class="vision-card">
+          <div class="vc-label">🇲🇾 Bahasa Platform</div>
+          <div class="vc-value">Bahasa Melayu + English (expand ke bahasa lain kemudian)</div>
+        </div>
+        <div class="vision-card">
+          <div class="vc-label">🛡️ Keselamatan</div>
+          <div class="vc-value">100% selamat untuk kanak-kanak — content moderation ketat</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. PENGGUNA -->
+  <div class="section">
+    <div class="section-head sh-coral">
+      <div class="section-icon">👥</div>
+      <div class="section-head-text">
+        <h2>Pengguna Utama NexStoria</h2>
+        <p>4 jenis pengguna yang berbeza keperluan</p>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="user-grid">
+        <div class="user-card">
+          <span class="uc-emoji">👧</span>
+          <div class="uc-name">Kanak-kanak</div>
+          <div class="uc-desc">Pembaca utama, umur 3–12 tahun</div>
+        </div>
+        <div class="user-card">
+          <span class="uc-emoji">✍️</span>
+          <div class="uc-name">Penulis</div>
+          <div class="uc-desc">Submit & kongsi cerita dari seluruh dunia</div>
+        </div>
+        <div class="user-card">
+          <span class="uc-emoji">👨‍👩‍👧</span>
+          <div class="uc-name">Ibu Bapa</div>
+          <div class="uc-desc">Pilih & pantau cerita untuk anak</div>
+        </div>
+        <div class="user-card">
+          <span class="uc-emoji">🏫</span>
+          <div class="uc-name">Guru</div>
+          <div class="uc-desc">Guna cerita untuk aktiviti kelas</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. SENARAI HALAMAN -->
+  <div class="section">
+    <div class="section-head sh-mint">
+      <div class="section-icon">📄</div>
+      <div class="section-head-text">
+        <h2>Senarai Halaman Platform</h2>
+        <p>Semua halaman yang perlu dibina untuk NexStoria</p>
+      </div>
+    </div>
+    <div class="section-body">
+      <h3>✅ Sudah Dibina (11 Halaman)</h3>
+      <div class="pages-grid" style="margin-bottom:1.2rem">
+        <div class="page-card built">
+          <span class="pc-status status-built">✅ SIAP</span>
+          <div class="pc-title">🏠 Homepage / Landing Page</div>
+          <div class="pc-url">/</div>
+          <ul class="pc-features">
+            <li>Hero banner + slogan animasi 3 warna</li>
+            <li>Stats counter (negara, penulis, cerita)</li>
+            <li>Featured stories carousel (8 kad)</li>
+            <li>10 kategori grid</li>
+            <li>World Map section + Writer CTA</li>
+          </ul>
+        </div>
+        <div class="page-card built">
+          <span class="pc-status status-built">✅ SIAP</span>
+          <div class="pc-title">🔍 Explore / Browse Page</div>
+          <div class="pc-url">/explore</div>
+          <ul class="pc-features">
+            <li>Search bar real-time dengan kiraan hasil</li>
+            <li>Filter sidebar (Sort, Kategori, Umur, Negara, Bahasa)</li>
+            <li>World Strip — pilih negara scroll mendatar</li>
+            <li>Grid/List view toggle + Load More</li>
+          </ul>
+        </div>
+        <div class="page-card built">
+          <span class="pc-status status-built">✅ SIAP</span>
+          <div class="pc-title">📖 Reader Page v2</div>
+          <div class="pc-url">/story/:id</div>
+          <ul class="pc-features">
+            <li>Scroll menegak Webtoon + fade-up reveal</li>
+            <li>Sistem Token 🪙 + Bintang ⭐ + Lencana 🏅</li>
+            <li>Kedai Token (kostum, pelekat, cerita premium, tip penulis)</li>
+            <li>Confetti reward apabila tamat cerita</li>
+            <li>Audio player + Language switcher</li>
+          </ul>
+        </div>
+        <div class="page-card built">
+          <span class="pc-status status-built">✅ SIAP</span>
+          <div class="pc-title">📝 Submit Story Page</div>
+          <div class="pc-url">/submit</div>
+          <ul class="pc-features">
+            <li>Progress bar 5 langkah</li>
+            <li>Category chips + Age Group selector</li>
+            <li>Story Panels (Webtoon style)</li>
+            <li>AI Translate selector 13 bahasa</li>
+            <li>Preview Modal + Success screen</li>
+          </ul>
+        </div>
+        <div class="page-card built">
+          <span class="pc-status status-built">✅ SIAP</span>
+          <div class="pc-title">🔐 Login / Register Page</div>
+          <div class="pc-url">/auth</div>
+          <ul class="pc-features">
+            <li>Role selector: Pembaca / Penulis</li>
+            <li>Password strength meter</li>
+            <li>Parental consent (bawah 13 tahun)</li>
+            <li>Social login: Google / Facebook</li>
+          </ul>
+        </div>
+        <div class="page-card built">
+          <span class="pc-status status-built">✅ SIAP</span>
+          <div class="pc-title">⚙️ Admin Dashboard</div>
+          <div class="pc-url">/admin</div>
+          <ul class="pc-features">
+            <li>Review Queue + Modal semakan AI</li>
+            <li>AI Moderation Panel (98.2% accuracy)</li>
+            <li>Bar chart + Donut chart analytics</li>
+            <li>Top Countries + Recent Users</li>
+          </ul>
+        </div>
+        <div class="page-card built">
+          <span class="pc-status status-built">✅ SIAP</span>
+          <div class="pc-title">👤 Author Profile Page</div>
+          <div class="pc-url">/author/:id</div>
+          <ul class="pc-features">
+            <li>Bio + avatar + badge Verified</li>
+            <li>6 stat chips + portfolio cerita</li>
+            <li>Pencapaian (6 badge) + pengikut terkini</li>
+            <li>Bahasa penulisan + aktiviti terkini</li>
+          </ul>
+        </div>
+        <div class="page-card built">
+          <span class="pc-status status-built">✅ SIAP</span>
+          <div class="pc-title">🎮 Reader Profile Page</div>
+          <div class="pc-url">/reader/:id</div>
+          <ul class="pc-features">
+            <li>Avatar + kostum + Level XP bar</li>
+            <li>Library cerita (Selesai / Sedang Baca)</li>
+            <li>Pencapaian 12 badge + sijil digital</li>
+            <li>Rentak membaca 7 hari + negara dibaca</li>
+            <li>Penulis diikuti + aktiviti terkini</li>
+          </ul>
+        </div>
+        <div class="page-card built">
+          <span class="pc-status status-built">✅ SIAP</span>
+          <div class="pc-title">✍️ Become a Writer Page</div>
+          <div class="pc-url">/become-writer</div>
+          <ul class="pc-features">
+            <li>Landing page sebab jadi penulis (6 manfaat)</li>
+            <li>4 langkah proses pendaftaran</li>
+            <li>Borang permohonan 3 langkah interaktif</li>
+            <li>FAQ accordion + showcase top authors</li>
+          </ul>
+        </div>
+        <div class="page-card built">
+          <span class="pc-status status-built">✅ SIAP</span>
+          <div class="pc-title">📋 Struktur Penuh</div>
+          <div class="pc-url">/docs/struktur</div>
+          <ul class="pc-features">
+            <li>Blueprint platform lengkap</li>
+            <li>Visi, misi, pengguna, fitur, roadmap</li>
+          </ul>
+        </div>
+        <div class="page-card built">
+          <span class="pc-status status-built">✅ SIAP</span>
+          <div class="pc-title">🏗️ Architecture Doc</div>
+          <div class="pc-url">/docs/architecture</div>
+          <ul class="pc-features">
+            <li>6 lapisan sistem + Panel deep dive</li>
+            <li>API routes + DB schema + Security</li>
+          </ul>
+        </div>
+      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. FITUR UTAMA -->
+  <div class="section">
+    <div class="section-head sh-sun">
+      <div class="section-icon">⭐</div>
+      <div class="section-head-text">
+        <h2>Senarai Fitur Utama</h2>
+        <p>Semua ciri-ciri yang perlu ada di NexStoria</p>
+      </div>
+    </div>
+    <div class="section-body">
+      <table class="feat-table">
+        <thead>
+          <tr>
+            <th>Fitur</th>
+            <th>Keterangan</th>
+            <th>Fasa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>🏠 Homepage</td><td>Landing page dengan featured stories + stats</td><td><span class="phase-badge p1">Fasa 1 ✅</span></td></tr>
+          <tr><td>🔍 Explore Page</td><td>Browse & filter cerita mengikut kategori, negara, bahasa</td><td><span class="phase-badge p1">Fasa 1 ✅</span></td></tr>
+          <tr><td>📖 Reader View v2</td><td>Webtoon scroll + Token + Bintang + Kedai Ganjaran</td><td><span class="phase-badge p1">Fasa 1 ✅</span></td></tr>
+          <tr><td>📝 Submit Story</td><td>Form lengkap upload cerita bergaya Webtoon</td><td><span class="phase-badge p1">Fasa 1 ✅</span></td></tr>
+          <tr><td>🎨 Panel System</td><td>Struktur scroll menegak ilustrasi + teks</td><td><span class="phase-badge p1">Fasa 1 ✅</span></td></tr>
+          <tr><td>🔐 Auth System</td><td>Daftar & login, role Pembaca/Penulis, parental consent</td><td><span class="phase-badge p1">Fasa 1 ✅</span></td></tr>
+          <tr><td>⚙️ Admin Dashboard</td><td>Review queue, AI moderation, analytics</td><td><span class="phase-badge p1">Fasa 1 ✅</span></td></tr>
+          <tr><td>👤 Author Profile</td><td>Portfolio penulis, stats, followers, pencapaian</td><td><span class="phase-badge p1">Fasa 1 ✅</span></td></tr>
+          <tr><td>🎮 Reader Profile</td><td>Gamified profile — token, level, library, sijil</td><td><span class="phase-badge p1">Fasa 1 ✅</span></td></tr>
+          <tr><td>✍️ Become a Writer</td><td>Landing page upgrade pembaca → penulis + borang 3 langkah</td><td><span class="phase-badge p1">Fasa 1 ✅</span></td></tr>
+          <tr><td>🪙 Token System</td><td>Earn token baca cerita, guna di Kedai Token</td><td><span class="phase-badge p1">Fasa 1 ✅</span></td></tr>
+          <tr><td>⭐ Gamification</td><td>Bintang, lencana, level XP, rentak membaca</td><td><span class="phase-badge p1">Fasa 1 ✅</span></td></tr>
+          <tr><td>🤖 AI Translate</td><td>Terjemahan automatik cerita ke 13+ bahasa</td><td><span class="phase-badge p2">Fasa 2</span></td></tr>
+          <tr><td>🎧 Audio Narration</td><td>Upload & dengar bacaan cerita</td><td><span class="phase-badge p2">Fasa 2</span></td></tr>
+          <tr><td>❤️ Like & Bookmark</td><td>Simpan & like cerita kegemaran</td><td><span class="phase-badge p2">Fasa 2</span></td></tr>
+          <tr><td>📊 Analytics Penulis</td><td>Stats reads, negara, panel popular, pertumbuhan pengikut</td><td><span class="phase-badge p2">Fasa 2</span></td></tr>
+          <tr><td>📱 Mobile App</td><td>React Native app iOS + Android</td><td><span class="phase-badge p2">Fasa 2</span></td></tr>
+          <tr><td>🏆 Leaderboard</td><td>Top penulis & cerita paling popular global</td><td><span class="phase-badge p3">Fasa 3</span></td></tr>
+          <tr><td>🔔 Notifikasi</td><td>Alert bila cerita baru dari penulis diikuti</td><td><span class="phase-badge p3">Fasa 3</span></td></tr>
+          <tr><td>🌍 Peta Dunia</td><td>Visualisasi negara asal semua cerita interaktif</td><td><span class="phase-badge p3">Fasa 3</span></td></tr>
+          <tr><td>🏫 Partnership Sekolah</td><td>Program khas untuk sekolah & perpustakaan</td><td><span class="phase-badge p3">Fasa 3</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 5. FLOW SUBMIT -->
+  <div class="section">
+    <div class="section-head sh-blue">
+      <div class="section-icon">🔄</div>
+      <div class="section-head-text">
+        <h2>Flow Submit & Publish Cerita</h2>
+        <p>Perjalanan cerita dari penulis ke pembaca</p>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="flow">
+        <div class="flow-step" style="border-color:var(--lavender);background:#f5f3ff">
+          <span class="fs-icon">✍️</span>
+          <span class="fs-label">Tulis Cerita</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <span class="fs-icon">📋</span>
+          <span class="fs-label">Isi Maklumat</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <span class="fs-icon">🖼️</span>
+          <span class="fs-label">Upload Cover</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <span class="fs-icon">📜</span>
+          <span class="fs-label">Tambah Panel</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <span class="fs-icon">👁️</span>
+          <span class="fs-label">Preview</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <span class="fs-icon">🚀</span>
+          <span class="fs-label">Submit</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <span class="fs-icon">🔍</span>
+          <span class="fs-label">Admin Review</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" style="border-color:var(--mint);background:#f0fdf8">
+          <span class="fs-icon">🌏</span>
+          <span class="fs-label">Published!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. TECH STACK -->
+  <div class="section">
+    <div class="section-head sh-pink">
+      <div class="section-icon">💻</div>
+      <div class="section-head-text">
+        <h2>Cadangan Tech Stack</h2>
+        <p>Teknologi yang sesuai untuk membina NexStoria</p>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="tech-grid">
+        <div class="tech-card">
+          <div class="tc-icon">⚛️</div>
+          <div class="tc-name">React / Next.js</div>
+          <div class="tc-role">Frontend — UI & halaman</div>
+        </div>
+        <div class="tech-card">
+          <div class="tc-icon">🟢</div>
+          <div class="tc-name">Node.js / Express</div>
+          <div class="tc-role">Backend — API server</div>
+        </div>
+        <div class="tech-card">
+          <div class="tc-icon">🔥</div>
+          <div class="tc-name">Supabase / Firebase</div>
+          <div class="tc-role">Database & Auth</div>
+        </div>
+        <div class="tech-card">
+          <div class="tc-icon">☁️</div>
+          <div class="tc-name">Cloudinary</div>
+          <div class="tc-role">Simpan gambar & audio</div>
+        </div>
+        <div class="tech-card">
+          <div class="tc-icon">🤖</div>
+          <div class="tc-name">Claude API / GPT</div>
+          <div class="tc-role">AI Translate & moderation</div>
+        </div>
+        <div class="tech-card">
+          <div class="tc-icon">🚀</div>
+          <div class="tc-name">Vercel / Netlify</div>
+          <div class="tc-role">Hosting & deployment</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. ROADMAP -->
+  <div class="section">
+    <div class="section-head sh-sun">
+      <div class="section-icon">🗺️</div>
+      <div class="section-head-text">
+        <h2>Roadmap Pembangunan</h2>
+        <p>Pelan 3 fasa untuk melancarkan NexStoria</p>
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="roadmap">
+        <div class="rm-item">
+          <div class="rm-phase"><span class="phase-badge p1" style="font-size:0.78rem;padding:4px 10px">Fasa 1<br>MVP</span></div>
+          <div class="rm-content">
+            <div class="rm-title">🏗️ Asas Platform (1–2 bulan)</div>
+            <div class="rm-items">✅ Homepage · ✅ Explore Page · ✅ Reader Page v2 · ✅ Submit Story · ✅ Auth System · ✅ Admin Dashboard · ✅ Author Profile · ✅ Reader Profile · ✅ Become a Writer · ✅ Token &amp; Gamification System</div>
+          </div>
+        </div>
+        <div class="rm-item">
+          <div class="rm-phase"><span class="phase-badge p2" style="font-size:0.78rem;padding:4px 10px">Fasa 2<br>Grow</span></div>
+          <div class="rm-content">
+            <div class="rm-title">🌱 Kembangkan Ciri (2–4 bulan)</div>
+            <div class="rm-items">AI Translate penuh · Audio Narration · Like &amp; Bookmark · Analytics Penulis lanjutan · Search &amp; Filter lanjutan · Mobile App (React Native)</div>
+          </div>
+        </div>
+        <div class="rm-item">
+          <div class="rm-phase"><span class="phase-badge p3" style="font-size:0.78rem;padding:4px 10px">Fasa 3<br>Scale</span></div>
+          <div class="rm-content">
+            <div class="rm-title">🚀 Skala Global (4–6 bulan)</div>
+            <div class="rm-items">Leaderboard global · Peta dunia interaktif · Notifikasi push · Analytics penulis · Program penulis berbayar · Partnership sekolah & perpustakaan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. WARNA & IDENTITY -->
+  <div class="section">
+    <div class="section-head sh-purple">
+      <div class="section-icon">🎨</div>
+      <div class="section-head-text">
+        <h2>Brand Identity NexStoria</h2>
+        <p>Warna, fon, dan identiti visual</p>
+      </div>
+    </div>
+    <div class="section-body">
+      <h3>Palet Warna</h3>
+      <div class="palette" style="margin-bottom:1.2rem">
+        <div class="color-swatch"><div class="swatch-dot" style="background:#ff6b6b"></div>Coral #FF6B6B</div>
+        <div class="color-swatch"><div class="swatch-dot" style="background:#a78bfa"></div>Lavender #A78BFA</div>
+        <div class="color-swatch"><div class="swatch-dot" style="background:#06d6a0"></div>Mint #06D6A0</div>
+        <div class="color-swatch"><div class="swatch-dot" style="background:#ffd166"></div>Sun #FFD166</div>
+        <div class="color-swatch"><div class="swatch-dot" style="background:#1a1a2e"></div>Ink #1A1A2E</div>
+      </div>
+      <hr class="divider">
+      <h3>Tipografi</h3>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap">
+        <div class="vision-card" style="flex:1;min-width:180px">
+          <div class="vc-label">Display / Logo</div>
+          <div class="vc-value" style="font-family:'Baloo 2',cursive;font-size:1.3rem">Baloo 2</div>
+          <div style="font-size:0.72rem;color:var(--soft)">Tajuk, logo, nombor</div>
+        </div>
+        <div class="vision-card" style="flex:1;min-width:180px">
+          <div class="vc-label">Body / UI</div>
+          <div class="vc-value" style="font-size:1.1rem">Nunito</div>
+          <div style="font-size:0.72rem;color:var(--soft)">Teks, label, butang</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NOTE -->
+  <div class="bottom-note">
+    <div class="bn-logo">Nex<span>Storia</span> 🌏</div>
+    <div class="bn-text">Dokumen ini adalah blueprint pembangunan NexStoria.<br>Simpan sebagai rujukan sepanjang projek ini dibina.</div>
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexStoria — Platform Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080b14; --bg2: #0d1220; --bg3: #121929;
+  --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.12);
+  --coral: #ff6b6b; --lavender: #a78bfa; --mint: #06d6a0;
+  --sun: #ffd166; --sky: #38bdf8; --pink: #f472b6;
+  --white: #f1f5f9; --muted: #64748b;
+  --card: rgba(255,255,255,0.03); --card-hover: rgba(255,255,255,0.06);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--white); min-height: 100vh; overflow-x: hidden; }
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background-image: linear-gradient(rgba(167,139,250,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(167,139,250,0.03) 1px, transparent 1px);
+  background-size: 40px 40px; pointer-events: none; z-index: 0;
+}
+header {
+  position: sticky; top: 0; z-index: 100;
+  padding: 0.8rem 1.5rem;
+  background: rgba(8,11,20,0.85); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;
+}
+.logo { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; }
+.logo span { color: var(--lavender); }
+.header-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--mint); background: rgba(6,214,160,0.1); border: 1px solid rgba(6,214,160,0.3); padding: 3px 10px; border-radius: 20px; }
+.nav-tabs { display: flex; gap: 0.2rem; flex-wrap: wrap; }
+.nav-tab { font-size: 0.75rem; font-weight: 700; padding: 5px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; color: var(--muted); background: none; border: none; font-family: 'Nunito', sans-serif; }
+.nav-tab:hover { color: var(--white); background: var(--card-hover); }
+.nav-tab.active { color: var(--lavender); background: rgba(167,139,250,0.1); }
+main { position: relative; z-index: 1; }
+.hero { text-align: center; padding: 3rem 2rem 2rem; }
+.hero-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--lavender); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.8rem; }
+.hero-title { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 800; line-height: 1.1; margin-bottom: 0.8rem; }
+.hero-title .hl { background: linear-gradient(135deg, var(--lavender), var(--coral)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero-sub { font-size: 0.9rem; color: var(--muted); max-width: 520px; margin: 0 auto 1.5rem; line-height: 1.7; }
+.hero-stats { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
+.hs { text-align: center; }
+.hs-num { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; }
+.hs-label { font-size: 0.7rem; color: var(--muted); }
+.arc-section { max-width: 1100px; margin: 0 auto; padding: 1rem 1.5rem 3rem; display: none; }
+.arc-section.active { display: block; animation: fadeUp 0.35s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.section-title { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; margin-bottom: 0.3rem; }
+.section-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 1.8rem; }
+
+/* LAYERS */
+.layers { display: flex; flex-direction: column; gap: 1px; }
+.layer { border: 1px solid var(--border2); border-radius: 16px; overflow: hidden; background: var(--card); transition: all 0.3s; }
+.layer:hover { border-color: rgba(255,255,255,0.2); background: var(--card-hover); }
+.layer-header { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); }
+.layer-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+.layer-info { flex: 1; }
+.layer-name { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 800; }
+.layer-desc { font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
+.layer-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; padding: 3px 9px; border-radius: 6px; font-weight: 600; }
+.layer-body { padding: 1rem 1.5rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.5rem; }
+.layer-chip { padding: 7px 11px; border-radius: 10px; border: 1px solid var(--border2); font-size: 0.76rem; font-weight: 700; background: rgba(255,255,255,0.03); display: flex; align-items: center; gap: 5px; }
+.dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.layer-arrow { display: flex; align-items: center; justify-content: center; height: 28px; gap: 8px; color: var(--muted); font-size: 0.68rem; font-family: 'JetBrains Mono', monospace; }
+.layer-arrow::before, .layer-arrow::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--border2), transparent); }
+
+/* layer colors */
+.l-client  { border-color: rgba(56,189,248,0.3); }  .l-client .layer-icon  { background: rgba(56,189,248,0.15); }  .l-client .layer-tag  { background: rgba(56,189,248,0.15); color: var(--sky); }
+.l-gateway { border-color: rgba(167,139,250,0.3); } .l-gateway .layer-icon { background: rgba(167,139,250,0.15); } .l-gateway .layer-tag { background: rgba(167,139,250,0.15); color: var(--lavender); }
+.l-service { border-color: rgba(255,107,107,0.3); } .l-service .layer-icon { background: rgba(255,107,107,0.15); } .l-service .layer-tag { background: rgba(255,107,107,0.15); color: var(--coral); }
+.l-data    { border-color: rgba(6,214,160,0.3); }   .l-data .layer-icon    { background: rgba(6,214,160,0.15); }   .l-data .layer-tag    { background: rgba(6,214,160,0.15); color: var(--mint); }
+.l-ai      { border-color: rgba(255,209,102,0.3); } .l-ai .layer-icon      { background: rgba(255,209,102,0.15); } .l-ai .layer-tag      { background: rgba(255,209,102,0.15); color: var(--sun); }
+.l-infra   { border-color: rgba(244,114,182,0.3); } .l-infra .layer-icon   { background: rgba(244,114,182,0.15); } .l-infra .layer-tag   { background: rgba(244,114,182,0.15); color: var(--pink); }
+
+/* PANEL SYSTEM */
+.panel-arch { display: grid; grid-template-columns: 220px 1fr; gap: 2rem; align-items: start; }
+@media (max-width: 700px) { .panel-arch { grid-template-columns: 1fr; } }
+.phone-mockup { background: var(--bg3); border: 1px solid var(--border2); border-radius: 36px; padding: 10px; box-shadow: 0 30px 80px rgba(0,0,0,0.5); }
+.phone-screen { background: #0a0e1a; border-radius: 28px; overflow: hidden; height: 440px; }
+.phone-bar { background: rgba(255,255,255,0.05); padding: 7px 14px; display: flex; align-items: center; justify-content: space-between; font-size: 0.6rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+.phone-story { overflow-y: auto; height: calc(100% - 32px); }
+.phone-panel { border-bottom: 1px solid rgba(255,255,255,0.05); }
+.phone-panel-img { width: 100%; height: 110px; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; }
+.pp1 { background: linear-gradient(135deg, #1e1b4b, #312e81); } .pp2 { background: linear-gradient(135deg, #064e3b, #065f46); } .pp3 { background: linear-gradient(135deg, #4c1d95, #6d28d9); } .pp4 { background: linear-gradient(135deg, #7c2d12, #9a3412); }
+.phone-panel-text { padding: 8px 11px; font-size: 0.65rem; line-height: 1.6; color: rgba(255,255,255,0.75); }
+.panel-specs { display: flex; flex-direction: column; gap: 0.8rem; }
+.spec-card { background: var(--card); border: 1px solid var(--border2); border-radius: 12px; padding: 1rem 1.1rem; }
+.spec-title { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: 700; color: var(--lavender); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+.spec-val { font-size: 0.8rem; line-height: 1.7; }
+.spec-code { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border2); border-radius: 8px; padding: 8px 12px; margin-top: 6px; color: var(--mint); line-height: 1.8; }
+
+/* DB SCHEMA */
+.schema-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+.table-card { background: var(--card); border: 1px solid var(--border2); border-radius: 12px; overflow: hidden; transition: all 0.2s; }
+.table-card:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
+.table-head { padding: 9px 13px; display: flex; align-items: center; gap: 7px; border-bottom: 1px solid var(--border); }
+.table-name { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 700; }
+.db-row { display: flex; align-items: center; padding: 3px 13px; gap: 7px; font-family: 'JetBrains Mono', monospace; font-size: 0.69rem; }
+.db-row:hover { background: rgba(255,255,255,0.04); }
+.db-pk { color: var(--sun); flex-shrink: 0; font-size: 0.62rem; } .db-fk { color: var(--sky); flex-shrink: 0; font-size: 0.62rem; }
+.db-field { color: var(--white); flex: 1; } .db-type { color: var(--muted); font-size: 0.65rem; }
+.th-users { background: rgba(56,189,248,0.1); } .th-stories { background: rgba(167,139,250,0.1); } .th-panels { background: rgba(255,107,107,0.1); } .th-tokens { background: rgba(255,209,102,0.1); } .th-achievements { background: rgba(6,214,160,0.1); } .th-follows { background: rgba(244,114,182,0.1); }
+.th-trans { background: rgba(6,214,160,0.1); } .th-cats { background: rgba(255,209,102,0.1); } .th-likes { background: rgba(244,114,182,0.1); }
+
+/* API */
+.api-grid { display: flex; flex-direction: column; gap: 0.4rem; }
+.api-row { display: flex; align-items: center; gap: 0.7rem; padding: 9px 13px; background: var(--card); border: 1px solid var(--border); border-radius: 9px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; transition: all 0.2s; }
+.api-row:hover { border-color: var(--border2); background: var(--card-hover); }
+.method { font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 5px; min-width: 42px; text-align: center; flex-shrink: 0; }
+.GET { background: rgba(6,214,160,0.2); color: var(--mint); } .POST { background: rgba(56,189,248,0.2); color: var(--sky); }
+.PUT { background: rgba(255,209,102,0.2); color: var(--sun); } .DELETE { background: rgba(255,107,107,0.2); color: var(--coral); } .PATCH { background: rgba(167,139,250,0.2); color: var(--lavender); }
+.api-path { color: var(--white); flex: 1; } .api-desc { color: var(--muted); font-size: 0.67rem; }
+.api-group-title { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--lavender); text-transform: uppercase; letter-spacing: 0.1em; margin: 1rem 0 0.3rem; padding-left: 3px; }
+
+/* MEDIA */
+.media-flow { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1.2rem; align-items: center; margin-top: 1.5rem; }
+@media (max-width: 600px) { .media-flow { grid-template-columns: 1fr; } }
+.media-box { background: var(--card); border: 1px solid var(--border2); border-radius: 14px; padding: 1.1rem; }
+.mb-title { font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 800; margin-bottom: 0.6rem; }
+.mb-item { font-size: 0.74rem; color: var(--muted); display: flex; align-items: center; gap: 6px; padding: 2px 0; }
+.mb-item::before { content: '→'; color: var(--lavender); font-size: 0.62rem; }
+.media-arrow { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; text-align: center; }
+.flow-diagram { background: var(--bg2); border: 1px solid var(--border2); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; }
+.flow-row { display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem; justify-content: center; }
+.fn-box { padding: 9px 12px; border-radius: 11px; border: 1px solid var(--border2); font-size: 0.74rem; font-weight: 700; min-width: 80px; text-align: center; background: var(--card); }
+.fn-icon { font-size: 1rem; display: block; margin-bottom: 2px; } .fn-label { font-size: 0.68rem; } .fn-sub { font-size: 0.6rem; color: var(--muted); margin-top: 2px; }
+.flow-line { flex: 1; height: 1px; min-width: 16px; background: linear-gradient(90deg, var(--border2), rgba(167,139,250,0.4), var(--border2)); position: relative; }
+.flow-line::after { content: '▶'; position: absolute; right: -5px; top: -6px; color: var(--lavender); font-size: 0.55rem; }
+
+/* SECURITY */
+.security-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+.sec-card { background: var(--card); border: 1px solid var(--border2); border-radius: 14px; padding: 1.1rem; }
+.sec-card:hover { border-color: rgba(255,255,255,0.2); }
+.sec-icon { font-size: 1.4rem; margin-bottom: 0.4rem; }
+.sec-title { font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 800; margin-bottom: 0.4rem; }
+.sec-item { font-size: 0.74rem; color: var(--muted); display: flex; gap: 5px; padding: 2px 0; }
+.sec-item::before { content: '✓'; color: var(--mint); flex-shrink: 0; }
+::-webkit-scrollbar { width: 5px; height: 5px; } ::-webkit-scrollbar-track { background: var(--bg); } ::-webkit-scrollbar-thumb { background: rgba(167,139,250,0.4); border-radius: 3px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Nex<span>Storia</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showTab('overview',this)">Overview</button>
+    <button class="nav-tab" onclick="showTab('panel',this)">Panel System</button>
+    <button class="nav-tab" onclick="showTab('database',this)">Database</button>
+    <button class="nav-tab" onclick="showTab('api',this)">API Routes</button>
+    <button class="nav-tab" onclick="showTab('media',this)">Media & CDN</button>
+    <button class="nav-tab" onclick="showTab('security',this)">Security</button>
+  </div>
+  <div class="header-tag">v1.0 · Architecture</div>
+</header>
+
+<main>
+<div class="hero">
+  <div class="hero-eyebrow">// platform architecture · webtoon-grade</div>
+  <h1 class="hero-title">NexStoria <span class="hl">System Architecture</span></h1>
+  <p class="hero-sub">Where the Next Generation of Stories Begins. — Struktur sebenar yang memisahkan NexStoria daripada website biasa. Ini yang startup buat — bukan sekadar HTML.</p>
+  <div class="hero-stats">
+    <div class="hs"><div class="hs-num" style="color:var(--sky)">6</div><div class="hs-label">Layers</div></div>
+    <div class="hs"><div class="hs-num" style="color:var(--lavender)">8</div><div class="hs-label">Microservices</div></div>
+    <div class="hs"><div class="hs-num" style="color:var(--mint)">6</div><div class="hs-label">DB Tables</div></div>
+    <div class="hs"><div class="hs-num" style="color:var(--coral)">20+</div><div class="hs-label">API Routes</div></div>
+    <div class="hs"><div class="hs-num" style="color:var(--sun)">3</div><div class="hs-label">AI Services</div></div>
+  </div>
+</div>
+
+<!-- OVERVIEW -->
+<div class="arc-section active" id="tab-overview">
+  <div class="section-title">System Architecture Overview</div>
+  <div class="section-sub">6 lapisan — dari browser pengguna hingga database & AI. Setiap lapisan ada fungsi tersendiri.</div>
+  <div class="layers">
+    <div class="layer l-client">
+      <div class="layer-header">
+        <div class="layer-icon">🖥️</div>
+        <div class="layer-info"><div class="layer-name">Layer 1 — Client Layer</div><div class="layer-desc">Apa yang dilihat & digunakan oleh pengguna (browser & mobile app)</div></div>
+        <span class="layer-tag">FRONTEND</span>
+      </div>
+      <div class="layer-body">
+        <div class="layer-chip"><div class="dot" style="background:var(--sky)"></div>Next.js (React)</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--sky)"></div>React Native (Mobile)</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--sky)"></div>Tailwind CSS</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--sky)"></div>Webtoon Panel Renderer</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--sky)"></div>Audio Player</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--sky)"></div>Language Switcher UI</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--sky)"></div>Author Profile Page</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--sky)"></div>Reader Profile Page</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--sky)"></div>Become a Writer Page</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--sky)"></div>Token Shop UI</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--sky)"></div>Gamification Engine</div>
+      </div>
+    </div>
+    <div class="layer-arrow">↕ HTTPS / REST API / WebSocket ↕</div>
+    <div class="layer l-gateway">
+      <div class="layer-header">
+        <div class="layer-icon">🚪</div>
+        <div class="layer-info"><div class="layer-name">Layer 2 — API Gateway</div><div class="layer-desc">Pintu masuk semua request — routing, auth check, rate limiting</div></div>
+        <span class="layer-tag">GATEWAY</span>
+      </div>
+      <div class="layer-body">
+        <div class="layer-chip"><div class="dot" style="background:var(--lavender)"></div>Nginx / Cloudflare</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--lavender)"></div>JWT Auth Middleware</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--lavender)"></div>Rate Limiter</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--lavender)"></div>Request Router</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--lavender)"></div>CORS Handler</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--lavender)"></div>Load Balancer</div>
+      </div>
+    </div>
+    <div class="layer-arrow">↕ Internal Service Calls ↕</div>
+    <div class="layer l-service">
+      <div class="layer-header">
+        <div class="layer-icon">⚙️</div>
+        <div class="layer-info"><div class="layer-name">Layer 3 — Microservices</div><div class="layer-desc">8 servis berasingan — setiap satu ada tugas tersendiri</div></div>
+        <span class="layer-tag">SERVICES</span>
+      </div>
+      <div class="layer-body">
+        <div class="layer-chip"><div class="dot" style="background:var(--coral)"></div>Auth Service</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--coral)"></div>Story Service</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--coral)"></div>Panel Service</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--coral)"></div>Author Profile Service</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--coral)"></div>Reader Profile Service</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--coral)"></div>Token &amp; Gamification Service</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--coral)"></div>Writer Upgrade Service</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--coral)"></div>Media Upload Service</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--coral)"></div>Translate Service</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--coral)"></div>Review / Moderation</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--coral)"></div>Notification Service</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--coral)"></div>Analytics Service</div>
+      </div>
+    </div>
+    <div class="layer-arrow">↕ SQL / NoSQL Queries ↕</div>
+    <div class="layer l-data">
+      <div class="layer-header">
+        <div class="layer-icon">🗄️</div>
+        <div class="layer-info"><div class="layer-name">Layer 4 — Data Layer</div><div class="layer-desc">Semua data disimpan — cerita, panel, pengguna, terjemahan</div></div>
+        <span class="layer-tag">DATABASE</span>
+      </div>
+      <div class="layer-body">
+        <div class="layer-chip"><div class="dot" style="background:var(--mint)"></div>PostgreSQL (main DB)</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--mint)"></div>Redis (cache & session)</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--mint)"></div>Supabase (BaaS)</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--mint)"></div>Cloudinary (images)</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--mint)"></div>S3 / R2 (audio files)</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--mint)"></div>ElasticSearch (search)</div>
+      </div>
+    </div>
+    <div class="layer-arrow">↕ API Calls ↕</div>
+    <div class="layer l-ai">
+      <div class="layer-header">
+        <div class="layer-icon">🤖</div>
+        <div class="layer-info"><div class="layer-name">Layer 5 — AI Layer</div><div class="layer-desc">Terjemahan automatik, content moderation, dan cadangan cerita</div></div>
+        <span class="layer-tag">AI / ML</span>
+      </div>
+      <div class="layer-body">
+        <div class="layer-chip"><div class="dot" style="background:var(--sun)"></div>Claude API (translate)</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--sun)"></div>GPT-4 (fallback)</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--sun)"></div>Content Safety API</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--sun)"></div>Recommendation Engine</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--sun)"></div>Text-to-Speech (TTS)</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--sun)"></div>Image Moderation</div>
+      </div>
+    </div>
+    <div class="layer-arrow">↕ Cloud Services ↕</div>
+    <div class="layer l-infra">
+      <div class="layer-header">
+        <div class="layer-icon">☁️</div>
+        <div class="layer-info"><div class="layer-name">Layer 6 — Infrastructure</div><div class="layer-desc">Platform hosting, monitoring, CI/CD, dan keselamatan</div></div>
+        <span class="layer-tag">INFRA</span>
+      </div>
+      <div class="layer-body">
+        <div class="layer-chip"><div class="dot" style="background:var(--pink)"></div>Vercel (frontend)</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--pink)"></div>Railway / Render</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--pink)"></div>Cloudflare CDN</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--pink)"></div>GitHub Actions CI/CD</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--pink)"></div>Sentry (monitoring)</div>
+        <div class="layer-chip"><div class="dot" style="background:var(--pink)"></div>Uptime Robot</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL SYSTEM -->
+<div class="arc-section" id="tab-panel">
+  <div class="section-title">Webtoon Panel System</div>
+  <div class="section-sub">Ini yang buat NexStoria rasa seperti Webtoon sebenar — bukan sekadar blog cerita biasa.</div>
+  <div class="panel-arch">
+    <div>
+      <div style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--muted);margin-bottom:0.8rem">// nexstoria.com/story/moon-rabbit</div>
+      <div class="phone-mockup">
+        <div class="phone-screen">
+          <div class="phone-bar"><span>🌙 The Moon Rabbit</span><span>🇯🇵→EN</span></div>
+          <div class="phone-story">
+            <div class="phone-panel"><div class="phone-panel-img pp1">🌙</div><div class="phone-panel-text">In a land far above the clouds, a small rabbit lived alone on the moon...</div></div>
+            <div class="phone-panel"><div class="phone-panel-img pp2">🐇</div><div class="phone-panel-text">Every night, she would look down at the Earth, wondering what it felt like to have friends.</div></div>
+            <div class="phone-panel"><div class="phone-panel-img pp3">⭐</div><div class="phone-panel-text">One day, a shooting star passed by. "Make a wish!" it whispered...</div></div>
+            <div class="phone-panel"><div class="phone-panel-img pp4">🌏</div><div class="phone-panel-text">And so the little rabbit's adventure to Earth began! 🐾</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel-specs">
+      <div class="spec-card">
+        <div class="spec-title">📐 Panel Structure (Database)</div>
+        <div class="spec-code">panels {<br>&nbsp;&nbsp;id: uuid<br>&nbsp;&nbsp;story_id: uuid → stories<br>&nbsp;&nbsp;order_index: integer<br>&nbsp;&nbsp;image_url: string (Cloudinary)<br>&nbsp;&nbsp;image_width: integer<br>&nbsp;&nbsp;image_height: integer<br>&nbsp;&nbsp;text_original: text<br>&nbsp;&nbsp;text_translated: jsonb {<br>&nbsp;&nbsp;&nbsp;&nbsp;"en": "...", "ms": "...", "ar": "..."<br>&nbsp;&nbsp;}<br>}</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-title">🖼️ Image Spec (Webtoon Standard)</div>
+        <div class="spec-val">Lebar standard: <strong style="color:var(--sky)">800px</strong> · Tinggi: <strong style="color:var(--sky)">flexible</strong><br>Format: <strong style="color:var(--mint)">WebP</strong> (70% lebih ringan dari JPG)<br>Max saiz: <strong style="color:var(--coral)">2MB</strong> per panel<br>Lazy load: <strong style="color:var(--sun)">Ya</strong> — panel bawah load bila scroll sahaja</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-title">🌐 AI Translation Flow</div>
+        <div class="spec-code">1. Submit → simpan text_original<br>2. Queue job → Claude API<br>3. Translate → EN, MS, AR, JP...<br>4. Simpan dalam text_translated{}<br>5. Reader pilih bahasa → cache</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-title">⚡ Performance — Lazy Loading</div>
+        <div class="spec-val">Panel 1–3 dimuatkan serta-merta. Panel seterusnya hanya dimuatkan apabila pengguna hampir sampai semasa scroll. Mengurangkan masa muat sebanyak <strong style="color:var(--mint)">~80%</strong>.</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-title">📱 Scroll Behaviour</div>
+        <div class="spec-val">Scroll menegak tanpa batas — sama seperti Webtoon & LINE Manga. Virtual DOM untuk prestasi terbaik pada cerita panjang 50+ panel.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DATABASE -->
+<div class="arc-section" id="tab-database">
+  <div class="section-title">Database Schema</div>
+  <div class="section-sub">6 jadual utama PostgreSQL — direka untuk scale dari 100 hingga 1 juta cerita.</div>
+  <div class="schema-grid">
+    <div class="table-card">
+      <div class="table-head th-users"><span>👤</span><span class="table-name">users</span></div>
+      <div style="padding:6px 0">
+        <div class="db-row"><span class="db-pk">PK</span><span class="db-field">id</span><span class="db-type">uuid</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">email</span><span class="db-type">varchar</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">pen_name</span><span class="db-type">varchar</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">country</span><span class="db-type">char(2)</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">role</span><span class="db-type">enum(reader,writer,admin)</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">avatar_url</span><span class="db-type">text</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">created_at</span><span class="db-type">timestamp</span></div>
+      </div>
+    </div>
+    <div class="table-card">
+      <div class="table-head th-stories"><span>📖</span><span class="table-name">stories</span></div>
+      <div style="padding:6px 0">
+        <div class="db-row"><span class="db-pk">PK</span><span class="db-field">id</span><span class="db-type">uuid</span></div>
+        <div class="db-row"><span class="db-fk">FK</span><span class="db-field">author_id</span><span class="db-type">→ users</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">title</span><span class="db-type">varchar(80)</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">summary</span><span class="db-type">text</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">cover_url</span><span class="db-type">text</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">age_group</span><span class="db-type">enum</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">status</span><span class="db-type">enum(draft,review,live)</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">views_count</span><span class="db-type">integer</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">published_at</span><span class="db-type">timestamp</span></div>
+      </div>
+    </div>
+    <div class="table-card">
+      <div class="table-head th-panels"><span>📜</span><span class="table-name">panels</span></div>
+      <div style="padding:6px 0">
+        <div class="db-row"><span class="db-pk">PK</span><span class="db-field">id</span><span class="db-type">uuid</span></div>
+        <div class="db-row"><span class="db-fk">FK</span><span class="db-field">story_id</span><span class="db-type">→ stories</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">order_index</span><span class="db-type">integer</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">image_url</span><span class="db-type">text</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">image_width</span><span class="db-type">integer</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">image_height</span><span class="db-type">integer</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">text_original</span><span class="db-type">text</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">text_translated</span><span class="db-type">jsonb</span></div>
+      </div>
+    </div>
+    <div class="table-card">
+      <div class="table-head th-trans"><span>🌐</span><span class="table-name">translations</span></div>
+      <div style="padding:6px 0">
+        <div class="db-row"><span class="db-pk">PK</span><span class="db-field">id</span><span class="db-type">uuid</span></div>
+        <div class="db-row"><span class="db-fk">FK</span><span class="db-field">story_id</span><span class="db-type">→ stories</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">language</span><span class="db-type">char(5)</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">title_translated</span><span class="db-type">varchar</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">summary_translated</span><span class="db-type">text</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">ai_generated</span><span class="db-type">boolean</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">created_at</span><span class="db-type">timestamp</span></div>
+      </div>
+    </div>
+    <div class="table-card">
+      <div class="table-head th-cats"><span>🏷️</span><span class="table-name">story_categories</span></div>
+      <div style="padding:6px 0">
+        <div class="db-row"><span class="db-fk">FK</span><span class="db-field">story_id</span><span class="db-type">→ stories</span></div>
+        <div class="db-row"><span class="db-fk">FK</span><span class="db-field">category_id</span><span class="db-type">→ categories</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field" style="color:var(--muted)">many-to-many junction</span></div>
+      </div>
+    </div>
+    <div class="table-card">
+      <div class="table-head th-likes"><span>❤️</span><span class="table-name">likes / bookmarks</span></div>
+      <div style="padding:6px 0">
+        <div class="db-row"><span class="db-pk">PK</span><span class="db-field">id</span><span class="db-type">uuid</span></div>
+        <div class="db-row"><span class="db-fk">FK</span><span class="db-field">user_id</span><span class="db-type">→ users</span></div>
+        <div class="db-row"><span class="db-fk">FK</span><span class="db-field">story_id</span><span class="db-type">→ stories</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">type</span><span class="db-type">enum(like,bookmark)</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">created_at</span><span class="db-type">timestamp</span></div>
+      </div>
+    </div>
+    <div class="db-table" style="border-color:rgba(255,209,102,0.2)">
+      <div class="table-head th-tokens"><span>🪙</span><span class="table-name">tokens</span></div>
+      <div style="padding:6px 0">
+        <div class="db-row"><span class="db-pk">PK</span><span class="db-field">id</span><span class="db-type">uuid</span></div>
+        <div class="db-row"><span class="db-fk">FK</span><span class="db-field">user_id</span><span class="db-type">→ users</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">balance</span><span class="db-type">integer default 0</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">type</span><span class="db-type">enum(earn,spend)</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">source</span><span class="db-type">enum(read,achievement,shop,tip)</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">amount</span><span class="db-type">integer</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">created_at</span><span class="db-type">timestamp</span></div>
+      </div>
+    </div>
+    <div class="db-table" style="border-color:rgba(6,214,160,0.2)">
+      <div class="table-head th-achievements"><span>🏅</span><span class="table-name">achievements</span></div>
+      <div style="padding:6px 0">
+        <div class="db-row"><span class="db-pk">PK</span><span class="db-field">id</span><span class="db-type">uuid</span></div>
+        <div class="db-row"><span class="db-fk">FK</span><span class="db-field">user_id</span><span class="db-type">→ users</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">badge_key</span><span class="db-type">varchar (e.g. first_read)</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">stars_earned</span><span class="db-type">integer</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">unlocked_at</span><span class="db-type">timestamp</span></div>
+      </div>
+    </div>
+    <div class="db-table" style="border-color:rgba(244,114,182,0.2)">
+      <div class="table-head th-follows"><span>👥</span><span class="table-name">follows</span></div>
+      <div style="padding:6px 0">
+        <div class="db-row"><span class="db-pk">PK</span><span class="db-field">id</span><span class="db-type">uuid</span></div>
+        <div class="db-row"><span class="db-fk">FK</span><span class="db-field">follower_id</span><span class="db-type">→ users (pembaca)</span></div>
+        <div class="db-row"><span class="db-fk">FK</span><span class="db-field">following_id</span><span class="db-type">→ users (penulis)</span></div>
+        <div class="db-row"><span class="db-pk"> </span><span class="db-field">created_at</span><span class="db-type">timestamp</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- API -->
+<div class="arc-section" id="tab-api">
+  <div class="section-title">REST API Routes</div>
+  <div class="section-sub">Semua endpoint yang menghidupkan fungsi NexStoria. Base URL: <code style="font-family:'JetBrains Mono',monospace;color:var(--lavender);font-size:0.78rem">/api/v1</code></div>
+  <div class="api-grid">
+    <div class="api-group-title">// AUTH</div>
+    <div class="api-row"><span class="method POST">POST</span><span class="api-path">/auth/register</span><span class="api-desc">Daftar akaun baru</span></div>
+    <div class="api-row"><span class="method POST">POST</span><span class="api-path">/auth/login</span><span class="api-desc">Login → return JWT token</span></div>
+    <div class="api-row"><span class="method POST">POST</span><span class="api-path">/auth/logout</span><span class="api-desc">Invalidate session</span></div>
+    <div class="api-group-title">// STORIES</div>
+    <div class="api-row"><span class="method GET">GET</span><span class="api-path">/stories</span><span class="api-desc">Senarai cerita (filter, sort, paginate)</span></div>
+    <div class="api-row"><span class="method GET">GET</span><span class="api-path">/stories/:id</span><span class="api-desc">Satu cerita + semua panel</span></div>
+    <div class="api-row"><span class="method POST">POST</span><span class="api-path">/stories</span><span class="api-desc">Submit cerita baru (writer only)</span></div>
+    <div class="api-row"><span class="method PUT">PUT</span><span class="api-path">/stories/:id</span><span class="api-desc">Kemaskini cerita (owner only)</span></div>
+    <div class="api-row"><span class="method DELETE">DELETE</span><span class="api-path">/stories/:id</span><span class="api-desc">Padam cerita (owner / admin)</span></div>
+    <div class="api-group-title">// PANELS</div>
+    <div class="api-row"><span class="method GET">GET</span><span class="api-path">/stories/:id/panels</span><span class="api-desc">Semua panel + terjemahan</span></div>
+    <div class="api-row"><span class="method POST">POST</span><span class="api-path">/stories/:id/panels</span><span class="api-desc">Tambah panel baru</span></div>
+    <div class="api-row"><span class="method PATCH">PATCH</span><span class="api-path">/panels/:id/reorder</span><span class="api-desc">Susun semula urutan panel</span></div>
+    <div class="api-group-title">// MEDIA</div>
+    <div class="api-row"><span class="method POST">POST</span><span class="api-path">/upload/image</span><span class="api-desc">Upload gambar → Cloudinary CDN</span></div>
+    <div class="api-row"><span class="method POST">POST</span><span class="api-path">/upload/audio</span><span class="api-desc">Upload audio → R2 / S3</span></div>
+    <div class="api-group-title">// AI TRANSLATE</div>
+    <div class="api-row"><span class="method POST">POST</span><span class="api-path">/translate/story/:id</span><span class="api-desc">Trigger AI translate untuk cerita</span></div>
+    <div class="api-row"><span class="method GET">GET</span><span class="api-path">/translate/:id/status</span><span class="api-desc">Semak status (pending / done)</span></div>
+    <div class="api-group-title">// SOCIAL</div>
+    <div class="api-row"><span class="method POST">POST</span><span class="api-path">/stories/:id/like</span><span class="api-desc">Toggle like / unlike</span></div>
+    <div class="api-row"><span class="method POST">POST</span><span class="api-path">/stories/:id/bookmark</span><span class="api-desc">Toggle bookmark</span></div>
+    <div class="api-group-title">// ADMIN</div>
+    <div class="api-row"><span class="method GET">GET</span><span class="api-path">/admin/review-queue</span><span class="api-desc">Cerita menunggu kelulusan</span></div>
+    <div class="api-row"><span class="method PATCH">PATCH</span><span class="api-path">/admin/stories/:id/approve</span><span class="api-desc">Luluskan atau tolak cerita</span></div>
+    <div class="api-row"><span class="method GET">GET</span><span class="api-path">/authors/:id</span><span class="api-desc">Profil penulis — bio, stats, pencapaian</span></div>
+    <div class="api-row"><span class="method GET">GET</span><span class="api-path">/authors/:id/stories</span><span class="api-desc">Semua cerita oleh penulis (published + draft)</span></div>
+    <div class="api-row"><span class="method POST">POST</span><span class="api-path">/authors/:id/follow</span><span class="api-desc">Toggle ikuti / batal ikut penulis</span></div>
+    <div class="api-group-title">// READERS &amp; UPGRADE</div>
+    <div class="api-row"><span class="method GET">GET</span><span class="api-path">/readers/:id</span><span class="api-desc">Profil pembaca — level, stats, library, pencapaian</span></div>
+    <div class="api-row"><span class="method POST">POST</span><span class="api-path">/readers/:id/upgrade</span><span class="api-desc">Naik taraf akaun pembaca → penulis</span></div>
+    <div class="api-group-title">// TOKENS &amp; GAMIFICATION</div>
+    <div class="api-row"><span class="method GET">GET</span><span class="api-path">/tokens/:userId</span><span class="api-desc">Baki token + sejarah transaksi</span></div>
+    <div class="api-row"><span class="method POST">POST</span><span class="api-path">/tokens/earn</span><span class="api-desc">Tambah token — selesai baca / pencapaian</span></div>
+    <div class="api-row"><span class="method POST">POST</span><span class="api-path">/tokens/spend</span><span class="api-desc">Guna token — beli item kedai / tip penulis</span></div>
+    <div class="api-row"><span class="method GET">GET</span><span class="api-path">/achievements/:userId</span><span class="api-desc">Senarai pencapaian + lencana pembaca</span></div>
+    <div class="api-row"><span class="method POST">POST</span><span class="api-path">/achievements/unlock</span><span class="api-desc">Unlock pencapaian baru untuk pembaca</span></div>
+  </div>
+</div>
+
+<!-- MEDIA & CDN -->
+<div class="arc-section" id="tab-media">
+  <div class="section-title">Media & CDN Architecture</div>
+  <div class="section-sub">Cara gambar & audio diproses, disimpan, dan dihantar pantas ke seluruh dunia.</div>
+  <div class="flow-diagram">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--lavender);margin-bottom:1rem">// Image Upload Pipeline</div>
+    <div class="flow-row">
+      <div class="fn-box" style="border-color:rgba(56,189,248,0.4)"><span class="fn-icon">🖼️</span><span class="fn-label">Penulis</span><span class="fn-sub">Upload gambar</span></div>
+      <div class="flow-line"></div>
+      <div class="fn-box" style="border-color:rgba(167,139,250,0.4)"><span class="fn-icon">⚙️</span><span class="fn-label">Validate</span><span class="fn-sub">Type & size check</span></div>
+      <div class="flow-line"></div>
+      <div class="fn-box" style="border-color:rgba(255,209,102,0.4)"><span class="fn-icon">🤖</span><span class="fn-label">AI Scan</span><span class="fn-sub">Content safety</span></div>
+      <div class="flow-line"></div>
+      <div class="fn-box" style="border-color:rgba(6,214,160,0.4)"><span class="fn-icon">☁️</span><span class="fn-label">Cloudinary</span><span class="fn-sub">Resize → WebP</span></div>
+      <div class="flow-line"></div>
+      <div class="fn-box" style="border-color:rgba(244,114,182,0.4)"><span class="fn-icon">🌍</span><span class="fn-label">CDN Edge</span><span class="fn-sub">Global delivery</span></div>
+    </div>
+  </div>
+  <div class="media-flow">
+    <div class="media-box">
+      <div class="mb-title" style="color:var(--sky)">🖼️ Images (Cloudinary)</div>
+      <div class="mb-item">Auto-convert ke WebP format</div>
+      <div class="mb-item">Resize standard 800px lebar</div>
+      <div class="mb-item">Lazy loading + blur placeholder</div>
+      <div class="mb-item">Thumbnail auto-generated (300px)</div>
+      <div class="mb-item">CDN cache 30 hari</div>
+      <div class="mb-item">AI moderation sebelum simpan</div>
+    </div>
+    <div class="media-arrow">
+      <span style="font-size:1.5rem">🌍</span>
+      <span>Cloudflare</span>
+      <span>Global CDN</span>
+      <span>Edge Nodes</span>
+    </div>
+    <div class="media-box">
+      <div class="mb-title" style="color:var(--mint)">🎧 Audio (R2 / S3)</div>
+      <div class="mb-item">MP3 / WAV / M4A diterima</div>
+      <div class="mb-item">Auto-transcode ke MP3 128kbps</div>
+      <div class="mb-item">Streaming (bukan download penuh)</div>
+      <div class="mb-item">Waveform preview auto-generated</div>
+      <div class="mb-item">CDN cache 7 hari</div>
+      <div class="mb-item">Signed URL untuk akses selamat</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECURITY -->
+<div class="arc-section" id="tab-security">
+  <div class="section-title">Security Architecture</div>
+  <div class="section-sub">NexStoria adalah platform kanak-kanak — keselamatan bukan pilihan, ia adalah kewajipan mutlak.</div>
+  <div class="security-grid">
+    <div class="sec-card">
+      <div class="sec-icon">🔐</div>
+      <div class="sec-title">Authentication</div>
+      <div class="sec-item">JWT token (access + refresh)</div>
+      <div class="sec-item">Bcrypt hashing (cost: 12)</div>
+      <div class="sec-item">Google OAuth 2.0</div>
+      <div class="sec-item">Session expire: 7 hari</div>
+      <div class="sec-item">2FA untuk admin accounts</div>
+    </div>
+    <div class="sec-card">
+      <div class="sec-icon">🛡️</div>
+      <div class="sec-title">Content Safety (Kanak-kanak)</div>
+      <div class="sec-item">AI scan setiap gambar sebelum publish</div>
+      <div class="sec-item">AI scan setiap teks cerita</div>
+      <div class="sec-item">Human review wajib untuk cerita baru</div>
+      <div class="sec-item">Report button untuk pembaca</div>
+      <div class="sec-item">Zero tolerance NSFW content</div>
+    </div>
+    <div class="sec-card">
+      <div class="sec-icon">🌐</div>
+      <div class="sec-title">Network Security</div>
+      <div class="sec-item">HTTPS everywhere (TLS 1.3)</div>
+      <div class="sec-item">Cloudflare DDoS protection</div>
+      <div class="sec-item">Rate limiting per IP & user</div>
+      <div class="sec-item">CORS — whitelist domains sahaja</div>
+      <div class="sec-item">CSP headers (XSS prevention)</div>
+    </div>
+    <div class="sec-card">
+      <div class="sec-icon">👧</div>
+      <div class="sec-title">COPPA Compliance</div>
+      <div class="sec-item">Tiada data dikumpul bawah 13 tahun</div>
+      <div class="sec-item">Parental consent untuk akaun kanak-kanak</div>
+      <div class="sec-item">Tiada iklan pada halaman kanak-kanak</div>
+      <div class="sec-item">Data minimization policy</div>
+      <div class="sec-item">Right to erasure (delete account)</div>
+    </div>
+    <div class="sec-card">
+      <div class="sec-icon">🗄️</div>
+      <div class="sec-title">Data Protection</div>
+      <div class="sec-item">Database encrypted at rest</div>
+      <div class="sec-item">Backup harian automatik</div>
+      <div class="sec-item">Row-level security (Supabase RLS)</div>
+      <div class="sec-item">Tiada hardcode credentials</div>
+      <div class="sec-item">Audit log semua admin actions</div>
+    </div>
+    <div class="sec-card">
+      <div class="sec-icon">⚡</div>
+      <div class="sec-title">API Security</div>
+      <div class="sec-item">API key rotation setiap 90 hari</div>
+      <div class="sec-item">Input validation & sanitization</div>
+      <div class="sec-item">SQL injection prevention (ORM)</div>
+      <div class="sec-item">File type magic byte validation</div>
+      <div class="sec-item">Max upload size enforced server-side</div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+function showTab(name, el) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.arc-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+}
+</script>
+</body>
+</html>

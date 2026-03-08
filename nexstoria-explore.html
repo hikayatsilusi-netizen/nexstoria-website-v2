@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Explore Stories — NexStoria</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --coral:#ff6b6b; --coral2:#ff4757;
+  --lav:#a78bfa; --lav2:#7c3aed;
+  --mint:#06d6a0; --sun:#ffd166;
+  --sky:#38bdf8; --pink:#f472b6;
+  --ink:#1a1a2e; --soft:#6b7a9e;
+  --muted:#94a3b8; --border:#e2e8f7;
+  --off:#f8faff; --white:#fff;
+  --card:#ffffff;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Nunito',sans-serif;background:var(--off);color:var(--ink);overflow-x:hidden;}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(255,255,255,0.95);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  height:60px;padding:0 2rem;
+  display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 2px 16px rgba(26,26,46,0.05);
+}
+.nav-logo{
+  font-family:'Baloo 2',cursive;
+  font-size:1.6rem;font-weight:800;color:var(--coral);
+  text-decoration:none;display:flex;align-items:center;gap:4px;
+}
+.nav-logo em{color:var(--lav);font-style:normal;}
+.nav-right{display:flex;align-items:center;gap:0.75rem;}
+.nav-btn{
+  font-family:'Nunito',sans-serif;font-weight:700;font-size:0.82rem;
+  padding:7px 16px;border-radius:10px;cursor:pointer;
+  border:1.5px solid var(--border);background:transparent;color:var(--soft);
+  transition:all 0.2s;text-decoration:none;
+}
+.nav-btn:hover{border-color:var(--lav);color:var(--lav);}
+.nav-btn.primary{
+  background:linear-gradient(135deg,var(--coral),var(--coral2));
+  border:none;color:white;
+  box-shadow:0 3px 10px rgba(255,107,107,0.3);
+}
+.nav-btn.primary:hover{transform:translateY(-1px);}
+
+/* ── EXPLORE HEADER ── */
+.explore-header{
+  background:linear-gradient(135deg,#1a1a2e 0%,#2d1b69 60%,#1a1a2e 100%);
+  padding:3rem 2rem 0;
+  position:relative;overflow:hidden;
+}
+.explore-header::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 20% 50%,rgba(167,139,250,0.15) 0%,transparent 50%),
+             radial-gradient(circle at 80% 30%,rgba(255,107,107,0.1) 0%,transparent 50%);
+}
+.eh-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1;}
+.eh-top{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;
+}
+.eh-title-group{}
+.eh-eyebrow{
+  font-size:0.72rem;font-weight:800;letter-spacing:0.15em;
+  text-transform:uppercase;color:var(--lav);margin-bottom:0.4rem;
+}
+.eh-title{
+  font-family:'Baloo 2',cursive;
+  font-size:2.2rem;font-weight:800;color:white;line-height:1.1;
+}
+.eh-sub{font-size:0.88rem;color:rgba(255,255,255,0.5);margin-top:4px;}
+.eh-stats{display:flex;gap:1.5rem;flex-wrap:wrap;}
+.eh-stat{text-align:center;}
+.eh-stat-num{
+  font-family:'Baloo 2',cursive;
+  font-size:1.5rem;font-weight:800;color:white;
+}
+.eh-stat-label{font-size:0.7rem;color:rgba(255,255,255,0.4);}
+
+/* search bar */
+.search-wrap{
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:16px 16px 0 0;
+  padding:1.2rem 1.5rem;
+  display:flex;align-items:center;gap:1rem;
+  flex-wrap:wrap;
+}
+.search-field{
+  flex:1;min-width:240px;
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:12px;padding:10px 14px;
+  transition:all 0.2s;
+}
+.search-field:focus-within{
+  background:rgba(255,255,255,0.15);
+  border-color:rgba(167,139,250,0.5);
+  box-shadow:0 0 0 3px rgba(167,139,250,0.15);
+}
+.search-field input{
+  background:transparent;border:none;outline:none;
+  font-family:'Nunito',sans-serif;font-size:0.9rem;
+  color:white;width:100%;
+}
+.search-field input::placeholder{color:rgba(255,255,255,0.3);}
+.search-icon{font-size:1rem;color:rgba(255,255,255,0.4);flex-shrink:0;}
+.search-btn{
+  font-family:'Nunito',sans-serif;font-weight:800;font-size:0.88rem;
+  padding:10px 24px;border-radius:12px;border:none;
+  background:linear-gradient(135deg,var(--lav),var(--lav2));
+  color:white;cursor:pointer;transition:all 0.2s;
+  white-space:nowrap;
+  box-shadow:0 4px 14px rgba(124,58,237,0.4);
+}
+.search-btn:hover{transform:translateY(-1px);}
+
+/* ── MAIN LAYOUT ── */
+.explore-body{
+  max-width:1100px;margin:0 auto;
+  padding:2rem 1.5rem 5rem;
+  display:grid;
+  grid-template-columns:260px 1fr;
+  gap:1.5rem;
+  align-items:start;
+}
+
+/* ── FILTER SIDEBAR ── */
+.filter-sidebar{
+  position:sticky;top:76px;
+  background:var(--card);
+  border:1.5px solid var(--border);
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 4px 20px rgba(26,26,46,0.05);
+}
+.fs-header{
+  padding:1rem 1.2rem;
+  background:linear-gradient(135deg,#f5f3ff,#ede9fe);
+  border-bottom:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.fs-title{font-weight:800;font-size:0.9rem;color:var(--ink);}
+.fs-reset{
+  font-size:0.72rem;font-weight:700;color:var(--lav);
+  cursor:pointer;background:none;border:none;font-family:'Nunito',sans-serif;
+}
+.fs-reset:hover{text-decoration:underline;}
+.fs-section{padding:1rem 1.2rem;border-bottom:1px solid var(--border);}
+.fs-section:last-child{border-bottom:none;}
+.fs-label{
+  font-size:0.68rem;font-weight:800;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--soft);margin-bottom:0.7rem;
+}
+
+/* category filters */
+.filter-chips{display:flex;flex-direction:column;gap:5px;}
+.fc-item{
+  display:flex;align-items:center;gap:8px;
+  padding:7px 10px;border-radius:10px;
+  cursor:pointer;transition:all 0.2s;
+  font-size:0.8rem;color:var(--soft);font-weight:600;
+}
+.fc-item:hover{background:var(--off);color:var(--ink);}
+.fc-item.active{background:#f5f3ff;color:var(--lav);}
+.fc-item input[type=checkbox]{
+  accent-color:var(--lav);width:15px;height:15px;cursor:pointer;flex-shrink:0;
+}
+.fc-count{
+  margin-left:auto;font-size:0.65rem;
+  background:var(--border);color:var(--soft);
+  padding:1px 7px;border-radius:6px;font-weight:700;
+}
+.fc-item.active .fc-count{background:rgba(167,139,250,0.15);color:var(--lav);}
+
+/* age group */
+.age-pills{display:flex;flex-direction:column;gap:5px;}
+.age-pill{
+  padding:8px 12px;border-radius:10px;
+  border:1.5px solid var(--border);
+  font-size:0.8rem;font-weight:700;
+  cursor:pointer;transition:all 0.2s;color:var(--soft);
+  display:flex;align-items:center;gap:8px;
+}
+.age-pill:hover{border-color:var(--mint);color:var(--mint);}
+.age-pill.active{border-color:var(--mint);background:#f0fdf8;color:var(--mint2);}
+
+/* country */
+.country-list{display:flex;flex-direction:column;gap:4px;max-height:180px;overflow-y:auto;}
+.country-list::-webkit-scrollbar{width:3px;}
+.country-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.country-item{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 8px;border-radius:8px;
+  cursor:pointer;font-size:0.78rem;color:var(--soft);
+  transition:all 0.2s;
+}
+.country-item:hover{background:var(--off);color:var(--ink);}
+.country-item.active{background:#fff0f0;color:var(--coral);}
+.country-item input[type=checkbox]{accent-color:var(--coral);width:14px;height:14px;cursor:pointer;}
+
+/* sort */
+.sort-select{
+  width:100%;font-family:'Nunito',sans-serif;font-size:0.82rem;
+  font-weight:700;padding:9px 12px;border-radius:10px;
+  border:1.5px solid var(--border);background:var(--off);
+  color:var(--ink);outline:none;cursor:pointer;
+  transition:border-color 0.2s;
+}
+.sort-select:focus{border-color:var(--lav);}
+
+/* difficulty */
+.diff-row{display:flex;gap:5px;}
+.diff-chip{
+  flex:1;padding:6px 4px;border-radius:8px;
+  border:1.5px solid var(--border);
+  font-size:0.72rem;font-weight:700;
+  cursor:pointer;text-align:center;color:var(--soft);
+  transition:all 0.2s;
+}
+.diff-chip:hover{border-color:var(--coral);color:var(--coral);}
+.diff-chip.active{background:#fff0f0;border-color:var(--coral);color:var(--coral);}
+
+/* ── RESULTS AREA ── */
+.results-area{}
+
+/* active filters bar */
+.active-filters{
+  display:flex;align-items:center;gap:0.5rem;
+  flex-wrap:wrap;margin-bottom:1.2rem;
+}
+.af-tag{
+  display:flex;align-items:center;gap:5px;
+  background:white;border:1.5px solid var(--border);
+  border-radius:8px;padding:4px 10px;
+  font-size:0.75rem;font-weight:700;color:var(--ink);
+}
+.af-remove{cursor:pointer;color:var(--soft);font-size:0.85rem;transition:color 0.2s;}
+.af-remove:hover{color:var(--coral);}
+.af-clear{
+  font-size:0.75rem;font-weight:700;color:var(--lav);
+  cursor:pointer;margin-left:auto;
+}
+.af-clear:hover{text-decoration:underline;}
+
+/* results header */
+.results-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.2rem;flex-wrap:wrap;gap:0.5rem;
+}
+.rh-count{font-size:0.82rem;color:var(--soft);}
+.rh-count strong{color:var(--ink);}
+.view-toggle{display:flex;gap:4px;}
+.vt-btn{
+  width:34px;height:34px;border-radius:8px;
+  border:1.5px solid var(--border);background:white;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:1rem;transition:all 0.2s;color:var(--soft);
+}
+.vt-btn.active{border-color:var(--lav);background:#f5f3ff;color:var(--lav);}
+
+/* ── STORY GRID ── */
+.story-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1rem;
+}
+.story-grid.list-view{grid-template-columns:1fr;}
+
+/* story card */
+.story-card{
+  background:var(--card);border-radius:16px;
+  border:1.5px solid var(--border);
+  overflow:hidden;cursor:pointer;
+  transition:all 0.25s;
+  animation:fadeUp 0.4s ease both;
+}
+.story-card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 16px 36px rgba(26,26,46,0.12);
+  border-color:transparent;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+.sc-cover{
+  width:100%;aspect-ratio:3/4;
+  display:flex;align-items:center;justify-content:center;
+  font-size:3rem;position:relative;overflow:hidden;
+}
+.sc-badge{
+  position:absolute;top:8px;left:8px;
+  font-size:0.6rem;font-weight:800;
+  padding:3px 8px;border-radius:7px;z-index:2;
+}
+.sc-lang-badge{
+  position:absolute;top:8px;right:8px;
+  background:rgba(0,0,0,0.5);
+  color:white;font-size:0.58rem;font-weight:700;
+  padding:2px 7px;border-radius:6px;z-index:2;
+  backdrop-filter:blur(4px);
+}
+.sc-body{padding:10px 12px 14px;}
+.sc-country{font-size:0.65rem;color:var(--soft);font-weight:700;margin-bottom:2px;}
+.sc-title{
+  font-family:'Baloo 2',cursive;
+  font-weight:700;font-size:0.9rem;color:var(--ink);
+  line-height:1.25;margin-bottom:5px;
+}
+.sc-author{font-size:0.68rem;color:var(--muted);margin-bottom:6px;}
+.sc-footer{display:flex;align-items:center;justify-content:space-between;}
+.sc-age{
+  font-size:0.62rem;font-weight:700;
+  padding:2px 7px;border-radius:6px;
+  background:var(--off);color:var(--soft);
+}
+.sc-reads{font-size:0.65rem;color:var(--muted);display:flex;align-items:center;gap:3px;}
+
+/* list view card */
+.story-grid.list-view .story-card{
+  display:flex;flex-direction:row;
+  border-radius:14px;
+}
+.story-grid.list-view .sc-cover{
+  width:100px;aspect-ratio:unset;height:120px;
+  flex-shrink:0;border-radius:12px 0 0 12px;
+  font-size:2.5rem;
+}
+.story-grid.list-view .sc-body{
+  flex:1;display:flex;flex-direction:column;justify-content:center;
+  padding:12px 14px;
+}
+.story-grid.list-view .sc-title{font-size:1rem;}
+
+/* cover gradients */
+.cov1{background:linear-gradient(160deg,#fde68a,#fca5a5,#c4b5fd);}
+.cov2{background:linear-gradient(160deg,#bfdbfe,#c7d2fe,#ddd6fe);}
+.cov3{background:linear-gradient(160deg,#d1fae5,#a7f3d0,#6ee7b7);}
+.cov4{background:linear-gradient(160deg,#fce7f3,#fbcfe8,#f9a8d4);}
+.cov5{background:linear-gradient(160deg,#fed7aa,#fde68a,#fcd34d);}
+.cov6{background:linear-gradient(160deg,#e9d5ff,#ddd6fe,#c4b5fd);}
+.cov7{background:linear-gradient(160deg,#cffafe,#bae6fd,#7dd3fc);}
+.cov8{background:linear-gradient(160deg,#d1fae5,#bfdbfe,#c7d2fe);}
+.cov9{background:linear-gradient(160deg,#fee2e2,#fecaca,#fca5a5);}
+.cov10{background:linear-gradient(160deg,#fef9c3,#fde68a,#fcd34d);}
+.cov11{background:linear-gradient(160deg,#f0fdf4,#dcfce7,#bbf7d0);}
+.cov12{background:linear-gradient(160deg,#fff7ed,#fed7aa,#fdba74);}
+
+/* badge colors */
+.badge-new{background:var(--lav);color:white;}
+.badge-top{background:var(--sun);color:#78350f;}
+.badge-staff{background:var(--mint);color:white;}
+.badge-trending{background:var(--coral);color:white;}
+
+/* ── LOAD MORE ── */
+.load-more-wrap{
+  text-align:center;margin-top:2.5rem;
+}
+.load-more-btn{
+  font-family:'Nunito',sans-serif;font-weight:800;font-size:0.9rem;
+  padding:12px 36px;border-radius:14px;
+  border:2px solid var(--border);background:white;color:var(--ink);
+  cursor:pointer;transition:all 0.2s;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.load-more-btn:hover{border-color:var(--lav);color:var(--lav);}
+.load-more-btn.loading{opacity:0.7;cursor:wait;}
+
+/* ── NO RESULTS ── */
+.no-results{
+  grid-column:1/-1;
+  text-align:center;padding:4rem 2rem;
+}
+.nr-icon{font-size:3.5rem;margin-bottom:1rem;display:block;}
+.nr-title{font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;color:var(--ink);margin-bottom:0.5rem;}
+.nr-sub{font-size:0.85rem;color:var(--soft);}
+
+/* ── FEATURED BANNER ── */
+.featured-banner{
+  grid-column:1/-1;
+  background:linear-gradient(135deg,var(--ink),#2d1b69);
+  border-radius:18px;padding:1.5rem 2rem;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:1rem;flex-wrap:wrap;
+  border:1px solid rgba(167,139,250,0.2);
+  margin-bottom:0.5rem;
+  position:relative;overflow:hidden;
+}
+.featured-banner::before{
+  content:'🌟';
+  position:absolute;right:1rem;top:50%;
+  transform:translateY(-50%);
+  font-size:5rem;opacity:0.06;
+}
+.fb-text h3{
+  font-family:'Baloo 2',cursive;
+  font-size:1.1rem;font-weight:800;color:white;margin-bottom:3px;
+}
+.fb-text p{font-size:0.78rem;color:rgba(255,255,255,0.5);}
+.fb-btn{
+  font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;
+  padding:8px 20px;border-radius:10px;border:none;
+  background:var(--lav);color:white;cursor:pointer;
+  transition:all 0.2s;white-space:nowrap;
+}
+.fb-btn:hover{background:var(--lav2);}
+
+/* ── WORLD MAP STRIP ── */
+.world-strip{
+  display:flex;gap:0.5rem;overflow-x:auto;
+  padding:1rem 0;scrollbar-width:none;
+  margin-bottom:1.5rem;
+}
+.world-strip::-webkit-scrollbar{display:none;}
+.ws-chip{
+  flex-shrink:0;
+  display:flex;align-items:center;gap:6px;
+  background:white;border:1.5px solid var(--border);
+  border-radius:12px;padding:7px 14px;
+  font-size:0.78rem;font-weight:700;color:var(--ink);
+  cursor:pointer;transition:all 0.2s;
+  white-space:nowrap;
+}
+.ws-chip:hover{border-color:var(--lav);color:var(--lav);}
+.ws-chip.active{background:#f5f3ff;border-color:var(--lav);color:var(--lav);}
+.ws-count{font-size:0.65rem;color:var(--muted);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1000px){
+  .story-grid{grid-template-columns:repeat(3,1fr);}
+}
+@media(max-width:780px){
+  .explore-body{grid-template-columns:1fr;}
+  .filter-sidebar{position:static;}
+  .story-grid{grid-template-columns:repeat(2,1fr);}
+  .eh-title{font-size:1.6rem;}
+}
+@media(max-width:480px){
+  .story-grid{grid-template-columns:repeat(2,1fr);}
+  .explore-body{padding:1rem 1rem 4rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">Nex<em>Storia</em> 🌏</a>
+  <div class="nav-right">
+    <a class="nav-btn" href="#">Log In</a>
+    <a class="nav-btn primary" href="#">✍️ Submit</a>
+  </div>
+</nav>
+
+<!-- EXPLORE HEADER -->
+<div class="explore-header">
+  <div class="eh-inner">
+    <div class="eh-top">
+      <div class="eh-title-group">
+        <div class="eh-eyebrow">🔍 Jelajah NexStoria</div>
+        <div class="eh-title">Explore Stories</div>
+        <div class="eh-sub">Cerita kanak-kanak dari 50+ negara — dalam bahasa kamu</div>
+      </div>
+      <div class="eh-stats">
+        <div class="eh-stat"><div class="eh-stat-num">5,240+</div><div class="eh-stat-label">Cerita</div></div>
+        <div class="eh-stat"><div class="eh-stat-num">50+</div><div class="eh-stat-label">Negara</div></div>
+        <div class="eh-stat"><div class="eh-stat-num">13</div><div class="eh-stat-label">Bahasa</div></div>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <div class="search-field">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input" placeholder="Cari cerita, penulis, atau negara…" oninput="handleSearch(this.value)">
+      </div>
+      <button class="search-btn" onclick="doSearch()">Cari Sekarang</button>
+    </div>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="explore-body">
+
+  <!-- FILTER SIDEBAR -->
+  <aside class="filter-sidebar">
+    <div class="fs-header">
+      <span class="fs-title">🎛️ Filter</span>
+      <button class="fs-reset" onclick="resetFilters()">Reset Semua</button>
+    </div>
+
+    <!-- Sort -->
+    <div class="fs-section">
+      <div class="fs-label">Susun Ikut</div>
+      <select class="sort-select" onchange="sortStories(this.value)">
+        <option value="popular">🔥 Paling Popular</option>
+        <option value="newest">🆕 Terbaru</option>
+        <option value="rating">⭐ Rating Tertinggi</option>
+        <option value="reads">👁️ Paling Banyak Dibaca</option>
+        <option value="az">🔤 A → Z</option>
+      </select>
+    </div>
+
+    <!-- Category -->
+    <div class="fs-section">
+      <div class="fs-label">Kategori</div>
+      <div class="filter-chips">
+        <label class="fc-item" onclick="toggleFilter('cat','all')">
+          <input type="checkbox" id="cat-all" checked> 🌟 Semua Kategori
+          <span class="fc-count">5,240</span>
+        </label>
+        <label class="fc-item" onclick="toggleFilter('cat','fairy')">
+          <input type="checkbox" id="cat-fairy"> 🧚 Fairy Tales
+          <span class="fc-count">1,240</span>
+        </label>
+        <label class="fc-item" onclick="toggleFilter('cat','animal')">
+          <input type="checkbox" id="cat-animal"> 🐾 Animal Stories
+          <span class="fc-count">980</span>
+        </label>
+        <label class="fc-item" onclick="toggleFilter('cat','bedtime')">
+          <input type="checkbox" id="cat-bedtime"> 🌙 Bedtime Stories
+          <span class="fc-count">750</span>
+        </label>
+        <label class="fc-item" onclick="toggleFilter('cat','adventure')">
+          <input type="checkbox" id="cat-adventure"> 🗺️ Adventure
+          <span class="fc-count">630</span>
+        </label>
+        <label class="fc-item" onclick="toggleFilter('cat','edu')">
+          <input type="checkbox" id="cat-edu"> 🎓 Educational
+          <span class="fc-count">520</span>
+        </label>
+        <label class="fc-item" onclick="toggleFilter('cat','friendship')">
+          <input type="checkbox" id="cat-friendship"> 👫 Friendship
+          <span class="fc-count">410</span>
+        </label>
+        <label class="fc-item" onclick="toggleFilter('cat','nature')">
+          <input type="checkbox" id="cat-nature"> 🌿 Nature
+          <span class="fc-count">380</span>
+        </label>
+        <label class="fc-item" onclick="toggleFilter('cat','culture')">
+          <input type="checkbox" id="cat-culture"> 🏮 Culture
+          <span class="fc-count">290</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Age Group -->
+    <div class="fs-section">
+      <div class="fs-label">Kumpulan Umur</div>
+      <div class="age-pills">
+        <div class="age-pill active" onclick="toggleAge(this,'all')">🌟 Semua Umur</div>
+        <div class="age-pill" onclick="toggleAge(this,'3-5')">🐣 3 – 5 tahun (Toddler)</div>
+        <div class="age-pill" onclick="toggleAge(this,'6-8')">🧒 6 – 8 tahun (Early Reader)</div>
+        <div class="age-pill" onclick="toggleAge(this,'9-12')">👦 9 – 12 tahun (Middle Grade)</div>
+      </div>
+    </div>
+
+    <!-- Country -->
+    <div class="fs-section">
+      <div class="fs-label">Negara Asal</div>
+      <div class="country-list">
+        <label class="country-item"><input type="checkbox"> 🇲🇾 Malaysia <span style="margin-left:auto;font-size:0.65rem;color:var(--muted)">340</span></label>
+        <label class="country-item"><input type="checkbox"> 🇯🇵 Japan <span style="margin-left:auto;font-size:0.65rem;color:var(--muted)">520</span></label>
+        <label class="country-item"><input type="checkbox"> 🇰🇷 Korea <span style="margin-left:auto;font-size:0.65rem;color:var(--muted)">280</span></label>
+        <label class="country-item"><input type="checkbox"> 🇮🇩 Indonesia <span style="margin-left:auto;font-size:0.65rem;color:var(--muted)">190</span></label>
+        <label class="country-item"><input type="checkbox"> 🇮🇳 India <span style="margin-left:auto;font-size:0.65rem;color:var(--muted)">310</span></label>
+        <label class="country-item"><input type="checkbox"> 🇧🇷 Brazil <span style="margin-left:auto;font-size:0.65rem;color:var(--muted)">160</span></label>
+        <label class="country-item"><input type="checkbox"> 🇨🇳 China <span style="margin-left:auto;font-size:0.65rem;color:var(--muted)">240</span></label>
+        <label class="country-item"><input type="checkbox"> 🇳🇬 Nigeria <span style="margin-left:auto;font-size:0.65rem;color:var(--muted)">140</span></label>
+        <label class="country-item"><input type="checkbox"> 🇫🇷 France <span style="margin-left:auto;font-size:0.65rem;color:var(--muted)">120</span></label>
+        <label class="country-item"><input type="checkbox"> 🇹🇭 Thailand <span style="margin-left:auto;font-size:0.65rem;color:var(--muted)">90</span></label>
+        <label class="country-item"><input type="checkbox"> 🇵🇭 Philippines <span style="margin-left:auto;font-size:0.65rem;color:var(--muted)">85</span></label>
+        <label class="country-item"><input type="checkbox"> 🇸🇦 Saudi Arabia <span style="margin-left:auto;font-size:0.65rem;color:var(--muted)">70</span></label>
+      </div>
+    </div>
+
+    <!-- Difficulty -->
+    <div class="fs-section">
+      <div class="fs-label">Tahap Kesukaran</div>
+      <div class="diff-row">
+        <div class="diff-chip active" onclick="toggleDiff(this)">🌱 Easy</div>
+        <div class="diff-chip active" onclick="toggleDiff(this)">🌿 Medium</div>
+        <div class="diff-chip active" onclick="toggleDiff(this)">🌳 Advanced</div>
+      </div>
+    </div>
+
+    <!-- Language -->
+    <div class="fs-section">
+      <div class="fs-label">Bahasa Terjemahan</div>
+      <div class="filter-chips">
+        <label class="fc-item"><input type="checkbox" checked> 🇲🇾 Bahasa Melayu</label>
+        <label class="fc-item"><input type="checkbox"> 🇬🇧 English</label>
+        <label class="fc-item"><input type="checkbox"> 🇸🇦 Arabic</label>
+        <label class="fc-item"><input type="checkbox"> 🇯🇵 Japanese</label>
+        <label class="fc-item"><input type="checkbox"> 🇰🇷 Korean</label>
+        <label class="fc-item"><input type="checkbox"> 🇨🇳 Chinese</label>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- RESULTS AREA -->
+  <div class="results-area">
+
+    <!-- World Strip -->
+    <div class="world-strip">
+      <div class="ws-chip active" onclick="filterCountry(this,'all')">🌍 Semua Negara</div>
+      <div class="ws-chip" onclick="filterCountry(this,'my')">🇲🇾 Malaysia <span class="ws-count">340</span></div>
+      <div class="ws-chip" onclick="filterCountry(this,'jp')">🇯🇵 Japan <span class="ws-count">520</span></div>
+      <div class="ws-chip" onclick="filterCountry(this,'kr')">🇰🇷 Korea <span class="ws-count">280</span></div>
+      <div class="ws-chip" onclick="filterCountry(this,'id')">🇮🇩 Indonesia <span class="ws-count">190</span></div>
+      <div class="ws-chip" onclick="filterCountry(this,'in')">🇮🇳 India <span class="ws-count">310</span></div>
+      <div class="ws-chip" onclick="filterCountry(this,'br')">🇧🇷 Brazil <span class="ws-count">160</span></div>
+      <div class="ws-chip" onclick="filterCountry(this,'cn')">🇨🇳 China <span class="ws-count">240</span></div>
+      <div class="ws-chip" onclick="filterCountry(this,'ng')">🇳🇬 Nigeria <span class="ws-count">140</span></div>
+      <div class="ws-chip" onclick="filterCountry(this,'fr')">🇫🇷 France <span class="ws-count">120</span></div>
+      <div class="ws-chip" onclick="filterCountry(this,'th')">🇹🇭 Thailand <span class="ws-count">90</span></div>
+      <div class="ws-chip" onclick="filterCountry(this,'sa')">🇸🇦 Arab <span class="ws-count">70</span></div>
+    </div>
+
+    <!-- Active Filters -->
+    <div class="active-filters" id="active-filters">
+      <span class="af-tag">🌟 Semua Kategori <span class="af-remove" onclick="removeFilter(this)">×</span></span>
+      <span class="af-tag">🧒 Semua Umur <span class="af-remove" onclick="removeFilter(this)">×</span></span>
+      <span class="af-tag">🔥 Popular <span class="af-remove" onclick="removeFilter(this)">×</span></span>
+    </div>
+
+    <!-- Results Header -->
+    <div class="results-header">
+      <div class="rh-count">Menunjukkan <strong id="result-count">5,240</strong> cerita</div>
+      <div class="view-toggle">
+        <div class="vt-btn active" id="grid-view-btn" onclick="setView('grid')" title="Grid View">⊞</div>
+        <div class="vt-btn" id="list-view-btn" onclick="setView('list')" title="List View">☰</div>
+      </div>
+    </div>
+
+    <!-- Story Grid -->
+    <div class="story-grid" id="story-grid">
+
+      <!-- Featured Banner -->
+      <div class="featured-banner">
+        <div class="fb-text">
+          <h3>🏆 Cerita Pilihan Minggu Ini — "The Moon Rabbit"</h3>
+          <p>Cerita dari Japan yang telah dibaca lebih 12,000 kali. Tersedia dalam 6 bahasa!</p>
+        </div>
+        <button class="fb-btn">Baca Sekarang →</button>
+      </div>
+
+      <!-- Cards -->
+      <div class="story-card" style="animation-delay:0.05s">
+        <div class="sc-cover cov1">🐰
+          <span class="sc-badge badge-top">🏆 Top</span>
+          <span class="sc-lang-badge">6 bahasa</span>
+        </div>
+        <div class="sc-body">
+          <div class="sc-country">🇯🇵 Japan</div>
+          <div class="sc-title">The Moon Rabbit</div>
+          <div class="sc-author">✍️ Hana Sato</div>
+          <div class="sc-footer">
+            <span class="sc-age">6–8 thn</span>
+            <span class="sc-reads">👁 12.4K</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="story-card" style="animation-delay:0.08s">
+        <div class="sc-cover cov2">🐯
+          <span class="sc-badge badge-new">🆕 Baru</span>
+          <span class="sc-lang-badge">4 bahasa</span>
+        </div>
+        <div class="sc-body">
+          <div class="sc-country">🇰🇷 Korea</div>
+          <div class="sc-title">Tiger & The Persimmon</div>
+          <div class="sc-author">✍️ Kim Jisoo</div>
+          <div class="sc-footer">
+            <span class="sc-age">6–8 thn</span>
+            <span class="sc-reads">👁 8.1K</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="story-card" style="animation-delay:0.11s">
+        <div class="sc-cover cov3">🦋
+          <span class="sc-badge badge-staff">💚 Staff</span>
+          <span class="sc-lang-badge">5 bahasa</span>
+        </div>
+        <div class="sc-body">
+          <div class="sc-country">🇲🇾 Malaysia</div>
+          <div class="sc-title">Si Rama-Rama Emas</div>
+          <div class="sc-author">✍️ Nurul Ain</div>
+          <div class="sc-footer">
+            <span class="sc-age">3–5 thn</span>
+            <span class="sc-reads">👁 6.7K</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="story-card" style="animation-delay:0.14s">
+        <div class="sc-cover cov4">🐘
+          <span class="sc-lang-badge">3 bahasa</span>
+        </div>
+        <div class="sc-body">
+          <div class="sc-country">🇮🇳 India</div>
+          <div class="sc-title">Ganesha's Little Friend</div>
+          <div class="sc-author">✍️ Priya Sharma</div>
+          <div class="sc-footer">
+            <span class="sc-age">6–8 thn</span>
+            <span class="sc-reads">👁 5.2K</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="story-card" style="animation-delay:0.17s">
+        <div class="sc-cover cov5">🦁
+          <span class="sc-badge badge-trending">🔥 Trending</span>
+          <span class="sc-lang-badge">4 bahasa</span>
+        </div>
+        <div class="sc-body">
+          <div class="sc-country">🇳🇬 Nigeria</div>
+          <div class="sc-title">Anansi & The Spider</div>
+          <div class="sc-author">✍️ Emeka Obi</div>
+          <div class="sc-footer">
+            <span class="sc-age">9–12 thn</span>
+            <span class="sc-reads">👁 4.8K</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="story-card" style="animation-delay:0.2s">
+        <div class="sc-cover cov6">🧚
+          <span class="sc-lang-badge">3 bahasa</span>
+        </div>
+        <div class="sc-body">
+          <div class="sc-country">🇫🇷 France</div>
+          <div class="sc-title">Le Petit Lutin Bleu</div>
+          <div class="sc-author">✍️ Sophie Martin</div>
+          <div class="sc-footer">
+            <span class="sc-age">3–5 thn</span>
+            <span class="sc-reads">👁 3.9K</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="story-card" style="animation-delay:0.23s">
+        <div class="sc-cover cov7">🐉
+          <span class="sc-badge badge-new">🆕 Baru</span>
+          <span class="sc-lang-badge">5 bahasa</span>
+        </div>
+        <div class="sc-body">
+          <div class="sc-country">🇨🇳 China</div>
+          <div class="sc-title">The Little Dragon's Gift</div>
+          <div class="sc-author">✍️ Li Wei</div>
+          <div class="sc-footer">
+            <span class="sc-age">6–8 thn</span>
+            <span class="sc-reads">👁 7.3K</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="story-card" style="animation-delay:0.26s">
+        <div class="sc-cover cov8">🌺
+          <span class="sc-lang-badge">3 bahasa</span>
+        </div>
+        <div class="sc-body">
+          <div class="sc-country">🇧🇷 Brazil</div>
+          <div class="sc-title">A Flor da Floresta</div>
+          <div class="sc-author">✍️ Ana Costa</div>
+          <div class="sc-footer">
+            <span class="sc-age">6–8 thn</span>
+            <span class="sc-reads">👁 3.1K</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="story-card" style="animation-delay:0.29s">
+        <div class="sc-cover cov9">🦊
+          <span class="sc-lang-badge">4 bahasa</span>
+        </div>
+        <div class="sc-body">
+          <div class="sc-country">🇮🇩 Indonesia</div>
+          <div class="sc-title">Kancil yang Bijak</div>
+          <div class="sc-author">✍️ Budi Santoso</div>
+          <div class="sc-footer">
+            <span class="sc-age">6–8 thn</span>
+            <span class="sc-reads">👁 4.5K</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="story-card" style="animation-delay:0.32s">
+        <div class="sc-cover cov10">🌙
+          <span class="sc-badge badge-staff">💚 Staff</span>
+          <span class="sc-lang-badge">6 bahasa</span>
+        </div>
+        <div class="sc-body">
+          <div class="sc-country">🇸🇦 Saudi Arabia</div>
+          <div class="sc-title">حكاية النجوم</div>
+          <div class="sc-author">✍️ Fatima Al-Zahra</div>
+          <div class="sc-footer">
+            <span class="sc-age">3–5 thn</span>
+            <span class="sc-reads">👁 2.8K</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="story-card" style="animation-delay:0.35s">
+        <div class="sc-cover cov11">🐢
+          <span class="sc-lang-badge">3 bahasa</span>
+        </div>
+        <div class="sc-body">
+          <div class="sc-country">🇹🇭 Thailand</div>
+          <div class="sc-title">The Slow Turtle's Race</div>
+          <div class="sc-author">✍️ Nong Kanya</div>
+          <div class="sc-footer">
+            <span class="sc-age">3–5 thn</span>
+            <span class="sc-reads">👁 2.1K</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="story-card" style="animation-delay:0.38s">
+        <div class="sc-cover cov12">🦅
+          <span class="sc-badge badge-trending">🔥 Trending</span>
+          <span class="sc-lang-badge">4 bahasa</span>
+        </div>
+        <div class="sc-body">
+          <div class="sc-country">🇵🇭 Philippines</div>
+          <div class="sc-title">The Eagle of Mindanao</div>
+          <div class="sc-author">✍️ Maria Santos</div>
+          <div class="sc-footer">
+            <span class="sc-age">9–12 thn</span>
+            <span class="sc-reads">👁 3.4K</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /story-grid -->
+
+    <!-- Load More -->
+    <div class="load-more-wrap">
+      <button class="load-more-btn" id="load-more" onclick="loadMore()">
+        ↓ Muatkan Lebih Banyak Cerita
+      </button>
+      <div style="font-size:0.75rem;color:var(--muted);margin-top:0.75rem">
+        Menunjukkan 12 daripada 5,240 cerita
+      </div>
+    </div>
+
+  </div><!-- /results-area -->
+</div><!-- /explore-body -->
+
+<script>
+// ── VIEW TOGGLE ──
+function setView(type) {
+  const grid = document.getElementById('story-grid');
+  const gridBtn = document.getElementById('grid-view-btn');
+  const listBtn = document.getElementById('list-view-btn');
+  if (type === 'list') {
+    grid.classList.add('list-view');
+    listBtn.classList.add('active');
+    gridBtn.classList.remove('active');
+  } else {
+    grid.classList.remove('list-view');
+    gridBtn.classList.add('active');
+    listBtn.classList.remove('active');
+  }
+}
+
+// ── FILTER CHIPS ──
+function toggleFilter(type, val) {
+  setTimeout(updateResultCount, 50);
+}
+function toggleAge(el, val) {
+  document.querySelectorAll('.age-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  updateResultCount();
+}
+function toggleDiff(el) {
+  el.classList.toggle('active');
+}
+function filterCountry(el, val) {
+  document.querySelectorAll('.ws-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  updateResultCount();
+}
+function removeFilter(el) {
+  el.parentElement.style.opacity = '0';
+  el.parentElement.style.transform = 'scale(0.8)';
+  el.parentElement.style.transition = 'all 0.2s';
+  setTimeout(() => el.parentElement.remove(), 200);
+  updateResultCount();
+}
+function resetFilters() {
+  document.querySelectorAll('.fc-item input').forEach(c => c.checked = false);
+  document.getElementById('cat-all').checked = true;
+  document.querySelectorAll('.age-pill').forEach((p,i) => p.classList.toggle('active', i===0));
+  document.querySelectorAll('.diff-chip').forEach(c => c.classList.add('active'));
+  document.querySelectorAll('.ws-chip').forEach((c,i) => c.classList.toggle('active', i===0));
+  document.getElementById('search-input').value = '';
+  updateResultCount(5240);
+}
+function updateResultCount(val) {
+  const count = val || Math.floor(Math.random() * 1000 + 3000);
+  const el = document.getElementById('result-count');
+  el.style.transform = 'scale(1.2)';
+  el.textContent = count.toLocaleString();
+  setTimeout(() => el.style.transform = '', 200);
+}
+
+// ── SEARCH ──
+function handleSearch(val) {
+  if (val.length > 0) {
+    const approx = Math.floor(Math.random() * 500 + 100);
+    document.getElementById('result-count').textContent = approx;
+  } else {
+    document.getElementById('result-count').textContent = '5,240';
+  }
+}
+function doSearch() {
+  const val = document.getElementById('search-input').value;
+  if (val) handleSearch(val);
+}
+
+// ── SORT ──
+function sortStories(val) {
+  const grid = document.getElementById('story-grid');
+  const cards = Array.from(grid.querySelectorAll('.story-card'));
+  cards.forEach((c,i) => {
+    c.style.opacity = '0';
+    c.style.transform = 'translateY(10px)';
+    setTimeout(() => {
+      c.style.opacity = '1';
+      c.style.transform = '';
+      c.style.transition = 'all 0.3s ease ' + (i * 0.04) + 's';
+    }, 150);
+  });
+}
+
+// ── LOAD MORE ──
+let page = 1;
+const newStories = [
+  {cov:'cov2',emoji:'🦒',country:'🇰🇪 Kenya',title:'The Tall Giraffe',author:'Amara Osei',age:'3–5 thn',reads:'1.8K',badge:''},
+  {cov:'cov6',emoji:'🐍',country:'🇮🇳 India',title:'Naga the Wise Serpent',author:'Raj Kumar',age:'9–12 thn',reads:'2.2K',badge:'badge-new'},
+  {cov:'cov3',emoji:'🌸',country:'🇯🇵 Japan',title:'Sakura no Yume',author:'Yuki Tanaka',age:'6–8 thn',reads:'3.1K',badge:''},
+  {cov:'cov9',emoji:'🐋',country:'🇳🇿 New Zealand',title:'Tangaroa\'s Whale',author:'Aroha Smith',age:'6–8 thn',reads:'1.5K',badge:'badge-new'},
+];
+function loadMore() {
+  const btn = document.getElementById('load-more');
+  btn.classList.add('loading');
+  btn.textContent = '⏳ Memuatkan…';
+  setTimeout(() => {
+    const grid = document.getElementById('story-grid');
+    newStories.forEach((s, i) => {
+      const card = document.createElement('div');
+      card.className = 'story-card';
+      card.style.animationDelay = (i * 0.08) + 's';
+      card.innerHTML = `
+        <div class="sc-cover ${s.cov}">${s.emoji}
+          ${s.badge ? `<span class="sc-badge ${s.badge}">${s.badge==='badge-new'?'🆕 Baru':'🔥'}</span>` : ''}
+          <span class="sc-lang-badge">3 bahasa</span>
+        </div>
+        <div class="sc-body">
+          <div class="sc-country">${s.country}</div>
+          <div class="sc-title">${s.title}</div>
+          <div class="sc-author">✍️ ${s.author}</div>
+          <div class="sc-footer">
+            <span class="sc-age">${s.age}</span>
+            <span class="sc-reads">👁 ${s.reads}</span>
+          </div>
+        </div>`;
+      grid.appendChild(card);
+    });
+    btn.classList.remove('loading');
+    btn.textContent = '↓ Muatkan Lebih Banyak Cerita';
+    page++;
+    if (page > 3) { btn.textContent = '✅ Semua Cerita Dipaparkan'; btn.disabled = true; }
+  }, 800);
+}
+
+// card click ripple
+document.addEventListener('click', e => {
+  const card = e.target.closest('.story-card');
+  if (card) {
+    card.style.transform = 'scale(0.97)';
+    setTimeout(() => card.style.transform = '', 150);
+  }
+});
+</script>
+</body>
+</html>

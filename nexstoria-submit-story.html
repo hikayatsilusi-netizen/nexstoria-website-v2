@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexStoria – Submit Your Story</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #e8f4fd;
+    --ink: #1a1a2e;
+    --coral: #ff6b6b;
+    --sun: #ffd166;
+    --mint: #06d6a0;
+    --lavender: #a78bfa;
+    --cloud: #ffffff;
+    --mist: #f0f4ff;
+    --border: #d4dff7;
+    --text-soft: #6b7a9e;
+    --panel-bg: #f8faff;
+    --step-done: #06d6a0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--sky);
+    color: var(--ink);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(167,139,250,0.12) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(6,214,160,0.10) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(255,209,102,0.08) 0%, transparent 60%);
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    background: white;
+    border-bottom: 2px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(26,26,46,0.06);
+  }
+  .logo {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--coral);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .logo-dot { color: var(--lavender); }
+  .header-badge {
+    background: linear-gradient(135deg, var(--lavender), #818cf8);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── PROGRESS BAR ─── */
+  .progress-wrap {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: center;
+  }
+  .progress-steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    max-width: 900px;
+    width: 100%;
+  }
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+    cursor: pointer;
+  }
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background: var(--border);
+    z-index: 0;
+    transition: background 0.3s;
+  }
+  .step.done:not(:last-child)::after { background: var(--step-done); }
+  .step-num {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--mist);
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.8rem;
+    position: relative; z-index: 1;
+    transition: all 0.3s;
+    color: var(--text-soft);
+  }
+  .step.active .step-num {
+    background: var(--lavender);
+    border-color: var(--lavender);
+    color: white;
+    box-shadow: 0 0 0 4px rgba(167,139,250,0.2);
+  }
+  .step.done .step-num {
+    background: var(--step-done);
+    border-color: var(--step-done);
+    color: white;
+  }
+  .step-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-soft);
+    margin-top: 4px;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .step.active .step-label { color: var(--lavender); }
+  .step.done .step-label { color: var(--step-done); }
+
+  /* ─── MAIN LAYOUT ─── */
+  .main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 5rem;
+  }
+
+  /* ─── SECTION CARD ─── */
+  .section-card {
+    background: white;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 24px rgba(26,26,46,0.05);
+    transition: box-shadow 0.3s;
+    animation: fadeUp 0.4s ease both;
+  }
+  .section-card:hover { box-shadow: 0 8px 32px rgba(26,26,46,0.09); }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .section-icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  .icon-blue   { background: #eff3ff; }
+  .icon-coral  { background: #fff0f0; }
+  .icon-mint   { background: #f0fdf8; }
+  .icon-sun    { background: #fffbeb; }
+  .icon-purple { background: #f5f3ff; }
+  .icon-pink   { background: #fdf2f8; }
+
+  .section-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .section-desc {
+    font-size: 0.78rem;
+    color: var(--text-soft);
+    margin-top: 1px;
+  }
+
+  /* ─── FORM ELEMENTS ─── */
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-row.three { grid-template-columns: 1fr 1fr 1fr; }
+  .form-row.full { grid-template-columns: 1fr; }
+  @media (max-width: 600px) {
+    .form-row, .form-row.three { grid-template-columns: 1fr; }
+  }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex; align-items: center; gap: 4px;
+  }
+  label .req { color: var(--coral); }
+
+  input[type="text"],
+  input[type="email"],
+  textarea,
+  select {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--panel-bg);
+    color: var(--ink);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    width: 100%;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--lavender);
+    box-shadow: 0 0 0 3px rgba(167,139,250,0.15);
+    background: white;
+  }
+  textarea { resize: vertical; min-height: 90px; }
+
+  /* ─── CATEGORY CHIPS ─── */
+  .chip-group { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .chip {
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--panel-bg);
+    color: var(--text-soft);
+    user-select: none;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .chip:hover { border-color: var(--lavender); color: var(--lavender); background: #f5f3ff; }
+  .chip.selected {
+    background: var(--lavender);
+    border-color: var(--lavender);
+    color: white;
+    box-shadow: 0 2px 8px rgba(167,139,250,0.4);
+  }
+
+  /* ─── AGE GROUP ─── */
+  .age-group { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .age-btn {
+    flex: 1; min-width: 100px;
+    padding: 12px 8px;
+    border-radius: 14px;
+    border: 2px solid var(--border);
+    background: var(--panel-bg);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .age-btn .age-emoji { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+  .age-btn .age-range { font-weight: 800; font-size: 0.85rem; color: var(--ink); display: block; }
+  .age-btn .age-label { font-size: 0.7rem; color: var(--text-soft); }
+  .age-btn:hover { border-color: var(--mint); }
+  .age-btn.selected {
+    border-color: var(--mint);
+    background: #f0fdf8;
+    box-shadow: 0 2px 12px rgba(6,214,160,0.25);
+  }
+  .age-btn.selected .age-range { color: var(--mint); }
+
+  /* ─── COVER UPLOAD ─── */
+  .cover-upload {
+    border: 2px dashed var(--border);
+    border-radius: 16px;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--panel-bg);
+    position: relative;
+  }
+  .cover-upload:hover { border-color: var(--lavender); background: #f5f3ff; }
+  .cover-upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .upload-icon { font-size: 2.8rem; margin-bottom: 0.5rem; }
+  .upload-title { font-weight: 700; color: var(--ink); font-size: 0.95rem; }
+  .upload-hint { font-size: 0.75rem; color: var(--text-soft); margin-top: 4px; }
+  .upload-tag {
+    display: inline-block;
+    background: var(--lavender);
+    color: white;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 10px;
+    margin-top: 8px;
+  }
+  #cover-preview {
+    width: 100%; max-height: 220px;
+    object-fit: cover;
+    border-radius: 12px;
+    display: none;
+    margin-top: 12px;
+  }
+
+  /* ─── PANELS ─── */
+  .panels-list { display: flex; flex-direction: column; gap: 1rem; }
+  .panel-item {
+    background: var(--mist);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    animation: fadeUp 0.3s ease both;
+  }
+  .panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px;
+    background: white;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .panel-num {
+    font-family: 'Baloo 2', cursive;
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: var(--lavender);
+    background: #f5f3ff;
+    padding: 2px 10px;
+    border-radius: 8px;
+  }
+  .panel-delete {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-soft); font-size: 1rem;
+    padding: 2px 6px; border-radius: 6px;
+    transition: all 0.2s;
+  }
+  .panel-delete:hover { background: #fff0f0; color: var(--coral); }
+  .panel-body { padding: 1rem; display: flex; gap: 1rem; }
+  .panel-img-zone {
+    width: 120px; height: 120px;
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+    font-size: 1.8rem;
+    background: white;
+    transition: all 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .panel-img-zone:hover { border-color: var(--lavender); }
+  .panel-img-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .panel-img-zone img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; border-radius: 10px;
+  }
+  .panel-img-zone .img-hint { font-size: 0.65rem; color: var(--text-soft); text-align: center; margin-top: 4px; }
+  .panel-text { flex: 1; }
+  .panel-text textarea { min-height: 110px; font-size: 0.84rem; }
+
+  .add-panel-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%;
+    padding: 12px;
+    border: 2px dashed var(--lavender);
+    border-radius: 12px;
+    background: #f5f3ff;
+    color: var(--lavender);
+    font-weight: 700; font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 0.5rem;
+  }
+  .add-panel-btn:hover { background: #ede9fe; }
+
+  /* ─── TRANSLATION ─── */
+  .lang-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .lang-chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    font-size: 0.8rem; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
+    background: var(--panel-bg); color: var(--text-soft);
+    display: flex; align-items: center; gap: 5px;
+  }
+  .lang-chip:hover { border-color: var(--sun); color: #b45309; background: #fffbeb; }
+  .lang-chip.selected { background: var(--sun); border-color: #f59e0b; color: #78350f; }
+
+  /* ─── DIFFICULTY ─── */
+  .diff-group { display: flex; gap: 0.75rem; }
+  .diff-btn {
+    flex: 1; padding: 12px;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    background: var(--panel-bg);
+    cursor: pointer; text-align: center;
+    transition: all 0.2s;
+  }
+  .diff-btn .diff-icon { font-size: 1.4rem; display: block; }
+  .diff-btn .diff-label { font-weight: 700; font-size: 0.82rem; color: var(--ink); }
+  .diff-btn:hover { border-color: var(--coral); }
+  .diff-btn.selected { border-color: var(--coral); background: #fff0f0; }
+  .diff-btn.selected .diff-label { color: var(--coral); }
+
+  /* ─── AUDIO ─── */
+  .audio-zone {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 1rem 1.2rem;
+    border: 1.5px dashed var(--border);
+    border-radius: 12px;
+    background: var(--panel-bg);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .audio-zone:hover { border-color: var(--mint); background: #f0fdf8; }
+  .audio-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .audio-icon { font-size: 2rem; }
+  .audio-info .audio-title { font-weight: 700; font-size: 0.88rem; }
+  .audio-info .audio-hint { font-size: 0.74rem; color: var(--text-soft); }
+  #audio-name { font-size: 0.78rem; color: var(--mint); font-weight: 700; margin-top: 4px; }
+
+  /* ─── ILLUSTRATION STYLE ─── */
+  .style-grid { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .style-chip {
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    font-size: 0.82rem; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
+    background: var(--panel-bg);
+    color: var(--text-soft);
+  }
+  .style-chip:hover, .style-chip.selected {
+    border-color: var(--coral); color: var(--coral); background: #fff0f0;
+  }
+
+  /* ─── SAFETY ─── */
+  .check-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: var(--panel-bg);
+    border: 1.5px solid var(--border);
+    margin-bottom: 0.6rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .check-item:hover { border-color: var(--mint); }
+  .check-item input[type="checkbox"] {
+    width: 20px; height: 20px;
+    accent-color: var(--mint);
+    border-radius: 4px;
+    flex-shrink: 0; margin-top: 1px;
+    cursor: pointer;
+  }
+  .check-text .check-title { font-weight: 700; font-size: 0.88rem; }
+  .check-text .check-sub { font-size: 0.74rem; color: var(--text-soft); }
+
+  /* ─── BOTTOM ACTIONS ─── */
+  .action-bar {
+    position: sticky; bottom: 0;
+    background: white;
+    border-top: 1.5px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 -4px 24px rgba(26,26,46,0.08);
+    z-index: 99;
+    flex-wrap: wrap; gap: 0.75rem;
+  }
+  .btn {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800; font-size: 0.9rem;
+    padding: 10px 24px;
+    border-radius: 12px;
+    border: none; cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .btn-ghost {
+    background: var(--mist);
+    color: var(--text-soft);
+    border: 1.5px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--border); color: var(--ink); }
+  .btn-preview {
+    background: var(--sun);
+    color: #78350f;
+    border: 1.5px solid #f59e0b;
+  }
+  .btn-preview:hover { background: #ffc300; transform: translateY(-1px); }
+  .btn-submit {
+    background: linear-gradient(135deg, var(--coral), #f43f5e);
+    color: white;
+    box-shadow: 0 4px 14px rgba(255,107,107,0.4);
+    padding: 10px 32px;
+  }
+  .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,107,107,0.5); }
+  .btn-submit:active { transform: translateY(0); }
+
+  /* ─── PREVIEW MODAL ─── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(26,26,46,0.7);
+    backdrop-filter: blur(6px);
+    z-index: 200;
+    display: none; align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal-box {
+    background: white;
+    border-radius: 24px;
+    width: 420px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 60px rgba(26,26,46,0.25);
+    animation: popUp 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popUp {
+    from { opacity: 0; transform: scale(0.85) translateY(20px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-header {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, var(--lavender), #818cf8);
+    border-radius: 24px 24px 0 0;
+    color: white; text-align: center;
+  }
+  .modal-header .modal-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 1.3rem; font-weight: 800;
+  }
+  .preview-cover {
+    width: 100%; height: 200px;
+    object-fit: cover; background: linear-gradient(135deg, #e0d7ff, #c7d2fe);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4rem;
+  }
+  .preview-meta { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); }
+  .preview-meta h2 { font-family: 'Baloo 2', cursive; font-size: 1.2rem; font-weight: 800; }
+  .preview-meta .meta-row { font-size: 0.8rem; color: var(--text-soft); margin-top: 4px; display: flex; gap: 0.8rem; flex-wrap: wrap; }
+  .preview-panel { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); }
+  .preview-panel img { width: 100%; border-radius: 12px; margin-bottom: 0.5rem; }
+  .preview-panel .panel-text-preview {
+    background: var(--mist); border-radius: 10px;
+    padding: 10px 14px; font-size: 0.85rem; line-height: 1.6;
+  }
+  .preview-empty {
+    padding: 2rem; text-align: center; font-size: 2rem;
+    color: var(--text-soft);
+  }
+  .modal-footer {
+    padding: 1rem 1.5rem;
+    display: flex; justify-content: space-between; gap: 0.5rem;
+  }
+
+  /* ─── SUCCESS ─── */
+  .success-overlay {
+    position: fixed; inset: 0;
+    background: white;
+    z-index: 300;
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 2rem;
+  }
+  .success-overlay.show { display: flex; animation: fadeIn 0.4s ease; }
+  .success-icon { font-size: 5rem; animation: bounce 0.8s ease 0.3s both; }
+  @keyframes bounce {
+    0% { transform: scale(0); } 70% { transform: scale(1.15); } 100% { transform: scale(1); }
+  }
+  .success-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 2rem; font-weight: 800;
+    color: var(--ink); margin-top: 1rem;
+  }
+  .success-sub { color: var(--text-soft); font-size: 0.95rem; margin-top: 0.5rem; max-width: 400px; }
+  .success-steps {
+    margin: 1.5rem 0;
+    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+  }
+  .success-step {
+    background: var(--mist); border-radius: 12px;
+    padding: 10px 18px; font-size: 0.82rem; font-weight: 700;
+    color: var(--ink); display: flex; align-items: center; gap: 6px;
+  }
+  .btn-home {
+    background: linear-gradient(135deg, var(--lavender), #818cf8);
+    color: white; font-weight: 800;
+    padding: 12px 36px; border-radius: 14px;
+    border: none; cursor: pointer; font-size: 1rem;
+    box-shadow: 0 4px 16px rgba(167,139,250,0.4);
+    font-family: 'Nunito', sans-serif;
+  }
+
+  /* ─── MISC ─── */
+  .char-count { font-size: 0.72rem; color: var(--text-soft); text-align: right; margin-top: 2px; }
+  .tip-box {
+    background: var(--mist); border-left: 3px solid var(--lavender);
+    border-radius: 0 10px 10px 0; padding: 10px 14px;
+    font-size: 0.78rem; color: var(--text-soft); margin-top: 0.75rem;
+  }
+  .tip-box strong { color: var(--lavender); }
+  .required-note { font-size: 0.75rem; color: var(--text-soft); margin-bottom: 1rem; }
+  .required-note span { color: var(--coral); font-weight: 700; }
+  .section-divider { border: none; border-top: 1px dashed var(--border); margin: 1.5rem 0; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">Nex<span class="logo-dot">Storia</span> 🌏</div>
+  <span class="header-badge">✍️ Submit Your Story</span>
+</header>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-steps">
+    <div class="step active" id="step1">
+      <div class="step-num">1</div>
+      <div class="step-label">Story Info</div>
+    </div>
+    <div class="step" id="step2">
+      <div class="step-num">2</div>
+      <div class="step-label">Cover</div>
+    </div>
+    <div class="step" id="step3">
+      <div class="step-num">3</div>
+      <div class="step-label">Panels</div>
+    </div>
+    <div class="step" id="step4">
+      <div class="step-num">4</div>
+      <div class="step-label">Extras</div>
+    </div>
+    <div class="step" id="step5">
+      <div class="step-num">5</div>
+      <div class="step-label">Submit</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN FORM -->
+<div class="main">
+  <p class="required-note"><span>*</span> Required fields</p>
+
+  <!-- ① BASIC INFO -->
+  <div class="section-card" style="animation-delay:0s">
+    <div class="section-header">
+      <div class="section-icon icon-blue">📖</div>
+      <div>
+        <div class="section-title">Basic Story Information</div>
+        <div class="section-desc">Tell us about your story</div>
+      </div>
+    </div>
+    <div class="form-row" style="margin-bottom:1rem">
+      <div class="field">
+        <label>Story Title <span class="req">*</span></label>
+        <input type="text" id="story-title" placeholder="e.g. The Moon Rabbit" maxlength="80" oninput="updateChar(this,'title-count')">
+        <div class="char-count" id="title-count">0 / 80</div>
+      </div>
+      <div class="field">
+        <label>Author / Pen Name <span class="req">*</span></label>
+        <input type="text" placeholder="e.g. Hana Sato">
+      </div>
+    </div>
+    <div class="form-row three" style="margin-bottom:1rem">
+      <div class="field">
+        <label>Country 🌍 <span class="req">*</span></label>
+        <select id="country-select">
+          <option value="">Select country…</option>
+          <option>🇲🇾 Malaysia</option><option>🇯🇵 Japan</option><option>🇰🇷 South Korea</option>
+          <option>🇮🇩 Indonesia</option><option>🇵🇭 Philippines</option><option>🇹🇭 Thailand</option>
+          <option>🇨🇳 China</option><option>🇮🇳 India</option><option>🇧🇷 Brazil</option>
+          <option>🇺🇸 United States</option><option>🇬🇧 United Kingdom</option><option>🇫🇷 France</option>
+          <option>🇩🇪 Germany</option><option>🇸🇦 Saudi Arabia</option><option>🇪🇬 Egypt</option>
+          <option>🇳🇬 Nigeria</option><option>🇿🇦 South Africa</option><option>🌍 Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Original Language <span class="req">*</span></label>
+        <select>
+          <option value="">Select language…</option>
+          <option>🇲🇾 Bahasa Melayu</option><option>🇯🇵 Japanese</option><option>🇰🇷 Korean</option>
+          <option>🇨🇳 Chinese (Mandarin)</option><option>🇬🇧 English</option><option>🇮🇩 Indonesian</option>
+          <option>🇵🇭 Filipino</option><option>🇹🇭 Thai</option><option>🇮🇳 Hindi</option>
+          <option>🇧🇷 Portuguese</option><option>🇫🇷 French</option><option>🇩🇪 German</option>
+          <option>🇸🇦 Arabic</option><option>🌍 Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Illustration Style</label>
+        <select>
+          <option value="">Choose style…</option>
+          <option>🎨 Watercolor</option><option>✏️ Pencil Sketch</option>
+          <option>🎌 Anime / Manga</option><option>🖼️ Cartoon</option>
+          <option>💻 Digital Art</option><option>📸 Photography</option>
+          <option>🎭 Mixed Media</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Story Summary <span class="req">*</span></label>
+      <textarea id="summary" placeholder="Write a short summary (2–3 sentences). This appears on the homepage when readers hover your cover." maxlength="300" oninput="updateChar(this,'summary-count')"></textarea>
+      <div class="char-count" id="summary-count">0 / 300</div>
+    </div>
+  </div>
+
+  <!-- ② CATEGORY & AGE -->
+  <div class="section-card" style="animation-delay:0.05s">
+    <div class="section-header">
+      <div class="section-icon icon-coral">🏷️</div>
+      <div>
+        <div class="section-title">Category & Age Group</div>
+        <div class="section-desc">Help readers find your story</div>
+      </div>
+    </div>
+
+    <label style="margin-bottom:0.5rem">Story Category <span class="req">*</span> <small style="font-weight:400;color:var(--text-soft)">(pick all that apply)</small></label>
+    <div class="chip-group" id="cat-group">
+      <div class="chip" onclick="toggleChip(this)">🧚 Fairy Tales</div>
+      <div class="chip" onclick="toggleChip(this)">🐾 Animal Stories</div>
+      <div class="chip" onclick="toggleChip(this)">🌙 Bedtime Stories</div>
+      <div class="chip" onclick="toggleChip(this)">🗺️ Adventure</div>
+      <div class="chip" onclick="toggleChip(this)">🎓 Educational</div>
+      <div class="chip" onclick="toggleChip(this)">👫 Friendship</div>
+      <div class="chip" onclick="toggleChip(this)">🌿 Nature</div>
+      <div class="chip" onclick="toggleChip(this)">🏮 Culture & Tradition</div>
+      <div class="chip" onclick="toggleChip(this)">🔮 Fantasy</div>
+      <div class="chip" onclick="toggleChip(this)">😄 Humor</div>
+    </div>
+
+    <hr class="section-divider">
+
+    <label style="margin-bottom:0.75rem">Age Group <span class="req">*</span></label>
+    <div class="age-group" id="age-group">
+      <div class="age-btn" onclick="selectAge(this)">
+        <span class="age-emoji">🐣</span>
+        <span class="age-range">3 – 5 yrs</span>
+        <span class="age-label">Toddler</span>
+      </div>
+      <div class="age-btn" onclick="selectAge(this)">
+        <span class="age-emoji">🧒</span>
+        <span class="age-range">6 – 8 yrs</span>
+        <span class="age-label">Early Reader</span>
+      </div>
+      <div class="age-btn" onclick="selectAge(this)">
+        <span class="age-emoji">👦</span>
+        <span class="age-range">9 – 12 yrs</span>
+        <span class="age-label">Middle Grade</span>
+      </div>
+      <div class="age-btn" onclick="selectAge(this)">
+        <span class="age-emoji">👨‍👩‍👧</span>
+        <span class="age-range">All Ages</span>
+        <span class="age-label">Family</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ COVER IMAGE -->
+  <div class="section-card" style="animation-delay:0.1s">
+    <div class="section-header">
+      <div class="section-icon icon-sun">🖼️</div>
+      <div>
+        <div class="section-title">Story Cover Image</div>
+        <div class="section-desc">This is the first thing readers will see — make it magical!</div>
+      </div>
+    </div>
+    <div class="cover-upload" id="cover-zone" onclick="document.getElementById('cover-file').click()">
+      <input type="file" id="cover-file" accept="image/*" onchange="previewCover(this)" style="display:none">
+      <div class="upload-icon">🌟</div>
+      <div class="upload-title">Upload Cover Image</div>
+      <div class="upload-hint">Recommended: 800 × 1200 px · JPG, PNG, WebP · Max 5MB</div>
+      <span class="upload-tag">Webtoon Portrait Format</span>
+      <img id="cover-preview" alt="Cover preview">
+    </div>
+    <div class="tip-box">
+      <strong>💡 Tip:</strong> A great cover shows your main character and has a clear, readable title. Think of it like a book cover in a library!
+    </div>
+  </div>
+
+  <!-- ④ STORY PANELS -->
+  <div class="section-card" style="animation-delay:0.15s">
+    <div class="section-header">
+      <div class="section-icon icon-purple">📜</div>
+      <div>
+        <div class="section-title">Story Panels</div>
+        <div class="section-desc">Add illustrations + text for each scene (Webtoon vertical scroll)</div>
+      </div>
+    </div>
+    <div class="panels-list" id="panels-list">
+      <!-- panels injected here -->
+    </div>
+    <button class="add-panel-btn" onclick="addPanel()">
+      <span style="font-size:1.2rem">＋</span> Add New Panel
+    </button>
+    <div class="tip-box">
+      <strong>📌 Suggestion:</strong> Aim for 6–12 panels per story. Each panel = one scene or moment.
+    </div>
+  </div>
+
+  <!-- ⑤ TRANSLATIONS -->
+  <div class="section-card" style="animation-delay:0.2s">
+    <div class="section-header">
+      <div class="section-icon icon-sun">🌐</div>
+      <div>
+        <div class="section-title">Translation Languages</div>
+        <div class="section-desc">Select languages you'd like your story to appear in</div>
+      </div>
+    </div>
+    <div class="lang-grid">
+      <div class="lang-chip" onclick="toggleChip(this)">🇬🇧 English</div>
+      <div class="lang-chip" onclick="toggleChip(this)">🇲🇾 Bahasa Melayu</div>
+      <div class="lang-chip" onclick="toggleChip(this)">🇸🇦 Arabic</div>
+      <div class="lang-chip" onclick="toggleChip(this)">🇫🇷 French</div>
+      <div class="lang-chip" onclick="toggleChip(this)">🇩🇪 German</div>
+      <div class="lang-chip" onclick="toggleChip(this)">🇪🇸 Spanish</div>
+      <div class="lang-chip" onclick="toggleChip(this)">🇵🇹 Portuguese</div>
+      <div class="lang-chip" onclick="toggleChip(this)">🇮🇩 Indonesian</div>
+      <div class="lang-chip" onclick="toggleChip(this)">🇯🇵 Japanese</div>
+      <div class="lang-chip" onclick="toggleChip(this)">🇰🇷 Korean</div>
+      <div class="lang-chip" onclick="toggleChip(this)">🇨🇳 Chinese</div>
+      <div class="lang-chip" onclick="toggleChip(this)">🇮🇳 Hindi</div>
+      <div class="lang-chip" onclick="toggleChip(this)">🇹🇭 Thai</div>
+    </div>
+    <div class="tip-box" style="margin-top:0.75rem">
+      <strong>🤖 AI Translate:</strong> Don't worry if you can't translate yourself — NexStoria can automatically translate your story using AI!
+    </div>
+  </div>
+
+  <!-- ⑥ EXTRAS (Difficulty + Audio) -->
+  <div class="section-card" style="animation-delay:0.25s">
+    <div class="section-header">
+      <div class="section-icon icon-mint">⭐</div>
+      <div>
+        <div class="section-title">Bonus Features</div>
+        <div class="section-desc">Optional extras that make your story stand out</div>
+      </div>
+    </div>
+
+    <label style="margin-bottom:0.6rem; display:block">Story Difficulty Level</label>
+    <div class="diff-group" id="diff-group">
+      <div class="diff-btn" onclick="selectDiff(this)">
+        <span class="diff-icon">🌱</span>
+        <span class="diff-label">Easy</span>
+      </div>
+      <div class="diff-btn" onclick="selectDiff(this)">
+        <span class="diff-icon">🌿</span>
+        <span class="diff-label">Medium</span>
+      </div>
+      <div class="diff-btn" onclick="selectDiff(this)">
+        <span class="diff-icon">🌳</span>
+        <span class="diff-label">Advanced</span>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <label style="margin-bottom:0.6rem; display:block">🎧 Audio Narration <small style="font-weight:400;color:var(--text-soft)">(optional)</small></label>
+    <div class="audio-zone" id="audio-zone">
+      <input type="file" accept="audio/*" onchange="handleAudio(this)">
+      <div class="audio-icon">🎙️</div>
+      <div class="audio-info">
+        <div class="audio-title">Upload Audio Narration</div>
+        <div class="audio-hint">MP3, WAV, M4A · Max 50MB · Read the full story aloud!</div>
+        <div id="audio-name"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑦ CONTENT SAFETY -->
+  <div class="section-card" style="animation-delay:0.3s">
+    <div class="section-header">
+      <div class="section-icon icon-mint">🛡️</div>
+      <div>
+        <div class="section-title">Content Safety & Declaration</div>
+        <div class="section-desc">Keeping NexStoria safe for every child in the world</div>
+      </div>
+    </div>
+    <label class="check-item" for="check1">
+      <input type="checkbox" id="check1">
+      <div class="check-text">
+        <div class="check-title">☑️ This story is safe for children</div>
+        <div class="check-sub">No violence, adult content, frightening imagery, or inappropriate language</div>
+      </div>
+    </label>
+    <label class="check-item" for="check2">
+      <input type="checkbox" id="check2">
+      <div class="check-text">
+        <div class="check-title">✍️ This is my original story</div>
+        <div class="check-sub">I confirm I own the rights to this story and all illustrations submitted</div>
+      </div>
+    </label>
+    <label class="check-item" for="check3">
+      <input type="checkbox" id="check3">
+      <div class="check-text">
+        <div class="check-title">🌍 I agree to NexStoria's content guidelines</div>
+        <div class="check-sub">My story respects cultural sensitivity and promotes positive values</div>
+      </div>
+    </label>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ACTION BAR -->
+<div class="action-bar">
+  <button class="btn btn-ghost">💾 Save Draft</button>
+  <div style="display:flex;gap:0.75rem">
+    <button class="btn btn-preview" onclick="openPreview()">👁️ Preview Story</button>
+    <button class="btn btn-submit" onclick="submitStory()">🚀 Submit Story</button>
+  </div>
+</div>
+
+<!-- PREVIEW MODAL -->
+<div class="modal-overlay" id="preview-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">📖 Story Preview</div>
+      <div style="font-size:0.8rem;opacity:0.85;margin-top:4px">How your story looks on NexStoria</div>
+    </div>
+    <div id="preview-cover-wrap">
+      <div class="preview-cover" id="preview-cover-img">🌟</div>
+    </div>
+    <div class="preview-meta">
+      <h2 id="preview-title">Your Story Title</h2>
+      <div class="meta-row">
+        <span id="preview-author">✍️ Author</span>
+        <span id="preview-country">🌍 Country</span>
+      </div>
+      <p style="font-size:0.82rem;color:var(--text-soft);margin-top:8px" id="preview-summary">Your story summary will appear here…</p>
+    </div>
+    <div id="preview-panels"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closePreview()">✕ Close</button>
+      <button class="btn btn-submit" onclick="closePreview();submitStory()">🚀 Submit Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-overlay" id="success">
+  <div class="success-icon">🎉</div>
+  <div class="success-title">Story Submitted!</div>
+  <p class="success-sub">Your story has been sent to the NexStoria team for review. We'll notify you once it's published!</p>
+  <div class="success-steps">
+    <div class="success-step">✅ Story Received</div>
+    <div class="success-step">🔍 Under Review</div>
+    <div class="success-step">🌏 Published Soon</div>
+  </div>
+  <button class="btn-home" onclick="document.getElementById('success').classList.remove('show')">🏠 Back to NexStoria</button>
+</div>
+
+<script>
+  let panelCount = 0;
+
+  // ── Add panel ──
+  function addPanel() {
+    panelCount++;
+    const list = document.getElementById('panels-list');
+    const div = document.createElement('div');
+    div.className = 'panel-item';
+    div.id = 'panel-' + panelCount;
+    div.innerHTML = `
+      <div class="panel-header">
+        <span class="panel-num">Panel ${panelCount}</span>
+        <button class="panel-delete" onclick="removePanel(${panelCount})" title="Delete panel">🗑</button>
+      </div>
+      <div class="panel-body">
+        <div class="panel-img-zone" onclick="document.getElementById('pimg-${panelCount}').click()">
+          <input type="file" id="pimg-${panelCount}" accept="image/*"
+            onchange="previewPanel(this,${panelCount})" style="display:none">
+          <span>🖼️</span>
+          <span class="img-hint">Upload<br>illustration</span>
+        </div>
+        <div class="panel-text">
+          <label style="font-size:0.78rem;color:var(--text-soft);margin-bottom:4px;display:block">Story Text for Panel ${panelCount}</label>
+          <textarea id="pt-${panelCount}" placeholder="Write the story text that goes with this illustration…"></textarea>
+        </div>
+      </div>`;
+    list.appendChild(div);
+    updateSteps();
+    div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function removePanel(id) {
+    const el = document.getElementById('panel-' + id);
+    if (el) { el.style.animation = 'none'; el.style.opacity = '0'; el.style.transform = 'scale(0.95)'; el.style.transition = 'all 0.2s'; setTimeout(() => el.remove(), 200); }
+  }
+
+  function previewPanel(input, id) {
+    const zone = input.parentElement;
+    const file = input.files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    let img = zone.querySelector('img');
+    if (!img) { img = document.createElement('img'); zone.appendChild(img); }
+    img.src = url;
+    zone.querySelectorAll('span').forEach(s => s.style.display = 'none');
+  }
+
+  // ── Cover preview ──
+  function previewCover(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const preview = document.getElementById('cover-preview');
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = 'block';
+    document.querySelector('.cover-upload .upload-icon').style.display = 'none';
+  }
+
+  // ── Char count ──
+  function updateChar(el, countId) {
+    document.getElementById(countId).textContent = el.value.length + ' / ' + el.maxLength;
+  }
+
+  // ── Chip toggle ──
+  function toggleChip(el) { el.classList.toggle('selected'); }
+
+  // ── Age select ──
+  function selectAge(el) {
+    document.querySelectorAll('.age-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    updateSteps();
+  }
+
+  // ── Diff select ──
+  function selectDiff(el) {
+    document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  // ── Audio ──
+  function handleAudio(input) {
+    if (!input.files[0]) return;
+    document.getElementById('audio-name').textContent = '🎵 ' + input.files[0].name;
+    document.getElementById('audio-zone').style.borderColor = 'var(--mint)';
+    document.getElementById('audio-zone').style.background = '#f0fdf8';
+  }
+
+  // ── Step progress ──
+  function updateSteps() {
+    const title = document.getElementById('story-title').value.trim();
+    const age = document.querySelector('.age-btn.selected');
+    const coverFile = document.getElementById('cover-file').files[0];
+    const panelItems = document.querySelectorAll('.panel-item');
+    const checks = document.querySelectorAll('input[type="checkbox"]:checked');
+
+    if (title) markStep(1, true);
+    if (age) markStep(2, true);
+    if (coverFile) markStep(2, true);
+    if (panelItems.length >= 1) markStep(3, true);
+    if (checks.length >= 1) markStep(4, true);
+  }
+
+  function markStep(n, done) {
+    const el = document.getElementById('step' + n);
+    if (el) { el.classList.toggle('done', done); el.classList.toggle('active', !done); }
+  }
+
+  document.getElementById('story-title').addEventListener('input', updateSteps);
+  document.getElementById('cover-file').addEventListener('change', updateSteps);
+  document.querySelectorAll('input[type="checkbox"]').forEach(c => c.addEventListener('change', updateSteps));
+
+  // ── Preview ──
+  function openPreview() {
+    // Fill meta
+    const title = document.getElementById('story-title').value || 'Untitled Story';
+    const summary = document.getElementById('summary').value || 'No summary yet.';
+    const country = document.getElementById('country-select').value || '🌍 Unknown';
+
+    document.getElementById('preview-title').textContent = title;
+    document.getElementById('preview-summary').textContent = summary;
+    document.getElementById('preview-country').textContent = country;
+
+    // Cover
+    const coverFile = document.getElementById('cover-file').files[0];
+    const coverWrap = document.getElementById('preview-cover-wrap');
+    if (coverFile) {
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(coverFile);
+      img.style.cssText = 'width:100%;max-height:220px;object-fit:cover;';
+      coverWrap.innerHTML = '';
+      coverWrap.appendChild(img);
+    }
+
+    // Panels
+    const panelDiv = document.getElementById('preview-panels');
+    panelDiv.innerHTML = '';
+    const items = document.querySelectorAll('.panel-item');
+    if (items.length === 0) {
+      panelDiv.innerHTML = '<div class="preview-empty">📭 No panels yet</div>';
+    } else {
+      items.forEach((item, i) => {
+        const text = item.querySelector('textarea')?.value || '';
+        const imgEl = item.querySelector('.panel-img-zone img');
+        const div = document.createElement('div');
+        div.className = 'preview-panel';
+        div.innerHTML = `
+          ${imgEl ? `<img src="${imgEl.src}" alt="Panel ${i+1}">` : `<div style="width:100%;height:100px;background:var(--mist);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin-bottom:8px">🖼️</div>`}
+          ${text ? `<div class="panel-text-preview">${text}</div>` : ''}`;
+        panelDiv.appendChild(div);
+      });
+    }
+
+    document.getElementById('preview-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePreview() {
+    document.getElementById('preview-modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('preview-modal').addEventListener('click', function(e) {
+    if (e.target === this) closePreview();
+  });
+
+  // ── Submit ──
+  function submitStory() {
+    const checks = document.querySelectorAll('input[type="checkbox"]:checked');
+    if (checks.length < 3) {
+      alert('Please complete all Content Safety checkboxes before submitting! 🛡️');
+      return;
+    }
+    const title = document.getElementById('story-title').value.trim();
+    if (!title) { alert('Please enter a Story Title! 📖'); return; }
+
+    closePreview();
+    document.getElementById('success').classList.add('show');
+    markStep(5, true);
+  }
+
+  // ── Init panels ──
+  addPanel();
+  addPanel();
+  addPanel();
+</script>
+</body>
+</html>

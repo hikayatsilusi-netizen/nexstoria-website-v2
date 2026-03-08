@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — NexStoria</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a14;--bg2:#0d0d1a;--bg3:#111120;
+  --card:#13131f;--border:#1e1e35;--border2:#252540;
+  --coral:#ff6b6b;--lav:#a78bfa;--lav2:#7c3aed;
+  --mint:#06d6a0;--sun:#ffd166;--sky:#38bdf8;
+  --pink:#f472b6;--orange:#fb923c;
+  --white:#f0f0ff;--muted:#4a4a6a;--text:#b0b0d0;
+  --mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:220px;flex-shrink:0;
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  height:100vh;position:sticky;top:0;
+  display:flex;flex-direction:column;
+  padding:1.2rem 0;
+  overflow-y:auto;
+}
+.sb-logo{
+  padding:0 1.2rem 1.2rem;
+  border-bottom:1px solid var(--border);
+  margin-bottom:0.5rem;
+}
+.sb-logo-text{
+  font-family:'Baloo 2',cursive;
+  font-size:1.4rem;font-weight:800;color:var(--white);
+  display:flex;align-items:center;gap:5px;
+}
+.sb-logo-text em{color:var(--lav);font-style:normal;}
+.sb-badge{
+  font-size:0.58rem;font-weight:800;
+  background:rgba(255,107,107,0.15);color:var(--coral);
+  border:1px solid rgba(255,107,107,0.2);
+  padding:2px 7px;border-radius:6px;margin-top:3px;
+  display:inline-block;letter-spacing:0.08em;
+}
+
+.sb-section{padding:0.75rem 1.2rem 0.25rem;}
+.sb-section-label{
+  font-size:0.6rem;font-weight:800;letter-spacing:0.15em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:0.4rem;
+}
+.sb-item{
+  display:flex;align-items:center;gap:9px;
+  padding:8px 10px;border-radius:10px;
+  cursor:pointer;transition:all 0.2s;
+  font-size:0.82rem;font-weight:700;color:var(--muted);
+  margin-bottom:2px;
+  position:relative;
+}
+.sb-item:hover{background:rgba(255,255,255,0.04);color:var(--text);}
+.sb-item.active{background:rgba(167,139,250,0.1);color:var(--lav);}
+.sb-item .si-icon{font-size:1rem;width:20px;text-align:center;}
+.sb-badge-count{
+  margin-left:auto;
+  font-size:0.62rem;font-weight:800;
+  background:var(--coral);color:white;
+  padding:1px 7px;border-radius:8px;
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.7;}}
+.sb-badge-count.mint{background:var(--mint);}
+.sb-badge-count.sun{background:var(--sun);color:#78350f;}
+
+.sb-footer{
+  margin-top:auto;padding:1rem 1.2rem;
+  border-top:1px solid var(--border);
+}
+.sb-user{display:flex;align-items:center;gap:8px;}
+.sb-avatar{
+  width:32px;height:32px;border-radius:10px;
+  background:linear-gradient(135deg,var(--lav),var(--coral));
+  display:flex;align-items:center;justify-content:center;font-size:1rem;
+}
+.sb-user-name{font-size:0.78rem;font-weight:700;color:var(--white);}
+.sb-user-role{font-size:0.65rem;color:var(--muted);}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-y:auto;min-width:0;}
+
+/* top bar */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  background:rgba(10,10,20,0.95);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  padding:0 2rem;height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.tb-title{font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;color:var(--white);}
+.tb-right{display:flex;align-items:center;gap:0.75rem;}
+.tb-btn{
+  font-family:'Nunito',sans-serif;font-weight:700;font-size:0.78rem;
+  padding:6px 14px;border-radius:9px;
+  border:1px solid var(--border2);background:var(--card);
+  color:var(--text);cursor:pointer;transition:all 0.2s;
+  display:flex;align-items:center;gap:5px;
+}
+.tb-btn:hover{border-color:var(--lav);color:var(--lav);}
+.tb-btn.primary{
+  background:linear-gradient(135deg,var(--lav),var(--lav2));
+  border:none;color:white;
+}
+.notif-btn{
+  width:34px;height:34px;border-radius:9px;
+  background:var(--card);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:1rem;position:relative;
+}
+.notif-dot{
+  position:absolute;top:6px;right:6px;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--coral);border:2px solid var(--bg);
+}
+
+/* content */
+.content{padding:2rem;}
+
+/* ── STAT CARDS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem;}
+.stat-card{
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:16px;padding:1.2rem;
+  position:relative;overflow:hidden;transition:all 0.2s;
+}
+.stat-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.stat-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+}
+.sc-coral::before{background:var(--coral);}
+.sc-lav::before{background:var(--lav);}
+.sc-mint::before{background:var(--mint);}
+.sc-sun::before{background:var(--sun);}
+.stat-icon{font-size:1.5rem;margin-bottom:8px;display:block;}
+.stat-val{
+  font-family:'Baloo 2',cursive;
+  font-size:1.8rem;font-weight:800;color:var(--white);
+  line-height:1;margin-bottom:3px;
+}
+.stat-label{font-size:0.75rem;color:var(--muted);}
+.stat-change{
+  font-size:0.7rem;font-weight:700;margin-top:5px;
+  display:flex;align-items:center;gap:3px;
+}
+.change-up{color:var(--mint);}
+.change-down{color:var(--coral);}
+
+/* ── REVIEW QUEUE (main feature) ── */
+.section-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1rem;
+}
+.sh-left{}
+.sh-title{
+  font-family:'Baloo 2',cursive;
+  font-size:1.1rem;font-weight:800;color:var(--white);
+}
+.sh-sub{font-size:0.75rem;color:var(--muted);margin-top:2px;}
+.sh-right{display:flex;gap:0.5rem;}
+.filter-btn{
+  font-size:0.72rem;font-weight:700;
+  padding:5px 12px;border-radius:8px;
+  border:1px solid var(--border2);background:var(--card);
+  color:var(--muted);cursor:pointer;transition:all 0.2s;
+  font-family:'Nunito',sans-serif;
+}
+.filter-btn.active{border-color:var(--lav);color:var(--lav);background:rgba(167,139,250,0.08);}
+
+/* queue table */
+.queue-table{
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:16px;overflow:hidden;margin-bottom:2rem;
+}
+.qt-head{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 1.5fr;
+  padding:10px 1.2rem;
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  font-size:0.65rem;font-weight:800;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--muted);
+  font-family:var(--mono);
+}
+.qt-row{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 1.5fr;
+  padding:12px 1.2rem;
+  border-bottom:1px solid rgba(255,255,255,0.03);
+  align-items:center;transition:background 0.15s;
+}
+.qt-row:last-child{border-bottom:none;}
+.qt-row:hover{background:rgba(255,255,255,0.02);}
+
+.qt-story{display:flex;align-items:center;gap:10px;}
+.qt-cover{
+  width:38px;height:48px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;flex-shrink:0;
+}
+.qt-story-title{font-size:0.82rem;font-weight:700;color:var(--white);line-height:1.2;}
+.qt-story-author{font-size:0.68rem;color:var(--muted);margin-top:1px;}
+
+.qt-cell{font-size:0.75rem;color:var(--text);}
+.qt-flag{font-size:0.82rem;}
+
+.status-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:0.65rem;font-weight:800;
+  padding:3px 9px;border-radius:7px;
+  font-family:var(--mono);letter-spacing:0.03em;
+}
+.sb-pending{background:rgba(255,209,102,0.12);color:var(--sun);border:1px solid rgba(255,209,102,0.2);}
+.sb-ai-ok{background:rgba(6,214,160,0.1);color:var(--mint);border:1px solid rgba(6,214,160,0.2);}
+.sb-ai-flag{background:rgba(255,107,107,0.1);color:var(--coral);border:1px solid rgba(255,107,107,0.2);}
+.sb-approved{background:rgba(6,214,160,0.12);color:var(--mint);}
+.sb-rejected{background:rgba(255,107,107,0.1);color:var(--coral);}
+
+.action-btns{display:flex;gap:5px;}
+.act-btn{
+  font-size:0.68rem;font-weight:800;
+  padding:5px 11px;border-radius:7px;
+  border:none;cursor:pointer;transition:all 0.2s;
+  font-family:'Nunito',sans-serif;
+}
+.act-approve{background:rgba(6,214,160,0.12);color:var(--mint);border:1px solid rgba(6,214,160,0.2);}
+.act-approve:hover{background:rgba(6,214,160,0.25);}
+.act-reject{background:rgba(255,107,107,0.1);color:var(--coral);border:1px solid rgba(255,107,107,0.15);}
+.act-reject:hover{background:rgba(255,107,107,0.2);}
+.act-view{background:rgba(167,139,250,0.1);color:var(--lav);border:1px solid rgba(167,139,250,0.2);}
+.act-view:hover{background:rgba(167,139,250,0.2);}
+
+/* ── BOTTOM GRID ── */
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;}
+
+/* mini chart */
+.chart-card{
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:16px;padding:1.2rem;
+}
+.cc-title{font-weight:800;font-size:0.88rem;color:var(--white);margin-bottom:1.2rem;}
+
+/* bar chart */
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:100px;}
+.bar-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
+.bar{
+  width:100%;border-radius:4px 4px 0 0;
+  transition:height 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  cursor:pointer;
+}
+.bar:hover{filter:brightness(1.2);}
+.bar-lbl{font-size:0.6rem;color:var(--muted);font-family:var(--mono);}
+.bar-val{font-size:0.62rem;color:var(--text);font-weight:700;}
+
+/* donut */
+.donut-wrap{display:flex;align-items:center;gap:1.5rem;}
+.donut-svg{flex-shrink:0;}
+.donut-legend{display:flex;flex-direction:column;gap:8px;}
+.dl-item{display:flex;align-items:center;gap:7px;font-size:0.75rem;}
+.dl-dot{width:10px;height:10px;border-radius:50%;}
+.dl-label{color:var(--text);}
+.dl-pct{margin-left:auto;font-family:var(--mono);font-size:0.68rem;color:var(--muted);}
+
+/* top countries */
+.country-list-admin{display:flex;flex-direction:column;gap:6px;}
+.cla-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;border-radius:10px;
+  background:rgba(255,255,255,0.02);
+  transition:background 0.2s;
+}
+.cla-item:hover{background:rgba(255,255,255,0.04);}
+.cla-flag{font-size:1.2rem;}
+.cla-name{font-size:0.8rem;font-weight:700;color:var(--text);flex:1;}
+.cla-bar-wrap{width:80px;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;}
+.cla-bar{height:100%;border-radius:2px;background:var(--lav);}
+.cla-count{font-family:var(--mono);font-size:0.68rem;color:var(--muted);min-width:30px;text-align:right;}
+
+/* recent users */
+.user-list{display:flex;flex-direction:column;gap:6px;}
+.ul-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;border-radius:10px;
+  background:rgba(255,255,255,0.02);
+}
+.ul-avatar{
+  width:32px;height:32px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+  flex-shrink:0;
+}
+.ul-name{font-size:0.78rem;font-weight:700;color:var(--text);}
+.ul-meta{font-size:0.65rem;color:var(--muted);}
+.ul-badge{
+  margin-left:auto;font-size:0.6rem;font-weight:800;
+  padding:2px 8px;border-radius:6px;
+}
+.ub-writer{background:rgba(167,139,250,0.15);color:var(--lav);}
+.ub-reader{background:rgba(56,189,248,0.12);color:var(--sky);}
+
+/* ai moderation panel */
+.ai-panel{
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:16px;overflow:hidden;margin-bottom:2rem;
+}
+.ap-header{
+  padding:1rem 1.2rem;
+  background:linear-gradient(135deg,rgba(244,114,182,0.06),rgba(167,139,250,0.06));
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.ap-title{font-weight:800;font-size:0.9rem;color:var(--white);display:flex;align-items:center;gap:7px;}
+.ap-live{
+  font-size:0.6rem;font-weight:800;
+  background:rgba(6,214,160,0.12);color:var(--mint);
+  border:1px solid rgba(6,214,160,0.2);
+  padding:2px 9px;border-radius:6px;
+  display:flex;align-items:center;gap:4px;
+}
+.ap-live::before{
+  content:'';width:5px;height:5px;border-radius:50%;
+  background:var(--mint);animation:pulse 1.5s infinite;
+}
+.ap-body{padding:1.2rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.ai-stat{
+  background:rgba(255,255,255,0.02);border-radius:12px;
+  padding:1rem;text-align:center;
+  border:1px solid var(--border);
+}
+.ai-stat-val{
+  font-family:'Baloo 2',cursive;
+  font-size:1.6rem;font-weight:800;color:var(--white);
+}
+.ai-stat-label{font-size:0.7rem;color:var(--muted);margin-top:3px;}
+.ai-stat-sub{font-size:0.62rem;color:var(--mint);margin-top:2px;}
+
+/* modal for review */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);
+  z-index:200;display:none;align-items:center;justify-content:center;
+  padding:2rem;
+}
+.modal-overlay.open{display:flex;animation:fadeIn 0.2s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.modal-box{
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:20px;width:560px;max-height:80vh;
+  overflow-y:auto;
+  animation:popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes popIn{from{opacity:0;transform:scale(0.9);}to{opacity:1;transform:scale(1);}}
+.modal-head{
+  padding:1.2rem 1.5rem;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-title{font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;color:var(--white);}
+.modal-close{
+  background:none;border:none;cursor:pointer;
+  color:var(--muted);font-size:1.2rem;padding:4px;
+  border-radius:6px;transition:all 0.2s;
+}
+.modal-close:hover{background:rgba(255,255,255,0.06);color:var(--white);}
+.modal-body{padding:1.5rem;}
+.modal-story-meta{display:flex;gap:1rem;margin-bottom:1.2rem;align-items:flex-start;}
+.modal-cover{
+  width:80px;height:100px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:2.5rem;
+  flex-shrink:0;
+}
+.modal-info h3{font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;color:var(--white);}
+.modal-info p{font-size:0.75rem;color:var(--muted);margin-top:3px;line-height:1.7;}
+.modal-ai-result{
+  background:rgba(6,214,160,0.05);border:1px solid rgba(6,214,160,0.15);
+  border-radius:12px;padding:1rem;margin-bottom:1.2rem;
+}
+.mar-title{font-size:0.72rem;font-weight:800;color:var(--mint);margin-bottom:0.5rem;display:flex;align-items:center;gap:5px;}
+.mar-item{
+  display:flex;align-items:center;gap:8px;font-size:0.75rem;color:var(--text);
+  padding:3px 0;
+}
+.mar-check{color:var(--mint);}
+.modal-panels-preview{margin-bottom:1.2rem;}
+.mpp-title{font-size:0.72rem;font-weight:800;color:var(--muted);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.08em;}
+.mpp-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;}
+.mpp-thumb{
+  width:70px;height:90px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:1.8rem;
+  flex-shrink:0;border:1px solid var(--border2);
+}
+.modal-actions{display:flex;gap:0.75rem;}
+.ma-btn{
+  flex:1;padding:11px;border-radius:12px;border:none;
+  font-family:'Nunito',sans-serif;font-weight:800;font-size:0.85rem;
+  cursor:pointer;transition:all 0.2s;
+}
+.ma-approve{background:linear-gradient(135deg,var(--mint),#059669);color:white;box-shadow:0 4px 14px rgba(6,214,160,0.25);}
+.ma-approve:hover{transform:translateY(-1px);}
+.ma-reject{background:rgba(255,107,107,0.12);color:var(--coral);border:1px solid rgba(255,107,107,0.2);}
+.ma-reject:hover{background:rgba(255,107,107,0.2);}
+.ma-revise{background:rgba(255,209,102,0.1);color:var(--sun);border:1px solid rgba(255,209,102,0.2);}
+
+@media(max-width:1000px){
+  .sidebar{display:none;}
+  .stat-grid{grid-template-columns:repeat(2,1fr);}
+  .bottom-grid{grid-template-columns:1fr;}
+  .qt-head,.qt-row{grid-template-columns:2fr 1fr 1fr 1.5fr;}
+  .qt-head > *:nth-child(3),.qt-row > *:nth-child(3),
+  .qt-head > *:nth-child(4),.qt-row > *:nth-child(4){display:none;}
+}
+@media(max-width:600px){
+  .stat-grid{grid-template-columns:1fr 1fr;}
+  .content{padding:1rem;}
+  .ai-panel .ap-body{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-text">Nex<em>Storia</em> 🌏</div>
+    <span class="sb-badge">ADMIN PANEL</span>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-label">Utama</div>
+    <div class="sb-item active" onclick="setActive(this)"><span class="si-icon">📊</span> Dashboard</div>
+    <div class="sb-item" onclick="setActive(this)"><span class="si-icon">🔍</span> Review Queue <span class="sb-badge-count">7</span></div>
+    <div class="sb-item" onclick="setActive(this)"><span class="si-icon">📖</span> Semua Cerita</div>
+    <div class="sb-item" onclick="setActive(this)"><span class="si-icon">👥</span> Pengguna <span class="sb-badge-count mint">248</span></div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-label">AI & Keselamatan</div>
+    <div class="sb-item" onclick="setActive(this)"><span class="si-icon">🤖</span> AI Moderation</div>
+    <div class="sb-item" onclick="setActive(this)"><span class="si-icon">🚨</span> Laporan <span class="sb-badge-count">3</span></div>
+    <div class="sb-item" onclick="setActive(this)"><span class="si-icon">🌐</span> AI Translate</div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-label">Platform</div>
+    <div class="sb-item" onclick="setActive(this)"><span class="si-icon">📈</span> Analytics</div>
+    <div class="sb-item" onclick="setActive(this)"><span class="si-icon">💎</span> Ekonomi & NexCoins <span class="sb-badge-count" style="background:rgba(255,209,102,0.2);color:#f59e0b">NEW</span></div>
+    <div class="sb-item" onclick="setActive(this)"><span class="si-icon">🌍</span> Peta Dunia</div>
+    <div class="sb-item" onclick="setActive(this)"><span class="si-icon">⚙️</span> Tetapan</div>
+  </div>
+
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">👑</div>
+      <div>
+        <div class="sb-user-name">Admin NexStoria</div>
+        <div class="sb-user-role">Super Admin</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tb-title">📊 Dashboard Overview</div>
+    <div class="tb-right">
+      <div class="notif-btn">🔔<div class="notif-dot"></div></div>
+      <button class="tb-btn">📅 Mac 2026</button>
+      <button class="tb-btn primary">⬇️ Export</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- STAT CARDS -->
+    <div class="stat-grid">
+      <div class="stat-card sc-coral">
+        <span class="stat-icon">📖</span>
+        <div class="stat-val" id="sc1">0</div>
+        <div class="stat-label">Jumlah Cerita Aktif</div>
+        <div class="stat-change change-up">↑ +124 minggu ini</div>
+      </div>
+      <div class="stat-card sc-lav">
+        <span class="stat-icon">⏳</span>
+        <div class="stat-val" id="sc2">0</div>
+        <div class="stat-label">Menunggu Review</div>
+        <div class="stat-change change-up" style="color:var(--sun)">⚠ Perlu tindakan</div>
+      </div>
+      <div class="stat-card sc-mint">
+        <span class="stat-icon">👥</span>
+        <div class="stat-val" id="sc3">0</div>
+        <div class="stat-label">Pengguna Berdaftar</div>
+        <div class="stat-change change-up">↑ +38 hari ini</div>
+      </div>
+      <div class="stat-card sc-sun">
+        <span class="stat-icon">👁️</span>
+        <div class="stat-val" id="sc4">0</div>
+        <div class="stat-label">Bacaan Hari Ini</div>
+        <div class="stat-change change-up">↑ +12% vs semalam</div>
+      </div>
+    </div>
+
+    <!-- AI MODERATION PANEL -->
+    <div class="ai-panel">
+      <div class="ap-header">
+        <div class="ap-title">🤖 AI Moderation Engine — Status</div>
+        <div class="ap-live">LIVE</div>
+      </div>
+      <div class="ap-body">
+        <div class="ai-stat">
+          <div class="ai-stat-val" style="color:var(--mint)">98.2%</div>
+          <div class="ai-stat-label">Ketepatan AI</div>
+          <div class="ai-stat-sub">✓ Bulan ini</div>
+        </div>
+        <div class="ai-stat">
+          <div class="ai-stat-val" style="color:var(--sky)">1,840</div>
+          <div class="ai-stat-label">Cerita Diproses AI</div>
+          <div class="ai-stat-sub">↑ Auto-moderated</div>
+        </div>
+        <div class="ai-stat">
+          <div class="ai-stat-val" style="color:var(--coral)">12</div>
+          <div class="ai-stat-label">Diflag AI (manual review)</div>
+          <div class="ai-stat-sub">⚠ Perlu semak admin</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVIEW QUEUE -->
+    <div class="section-header">
+      <div class="sh-left">
+        <div class="sh-title">🔍 Review Queue — Cerita Menunggu</div>
+        <div class="sh-sub">7 cerita perlu disemak sebelum diterbitkan</div>
+      </div>
+      <div class="sh-right">
+        <button class="filter-btn active">Semua (7)</button>
+        <button class="filter-btn">AI Flagged (2)</button>
+        <button class="filter-btn">Baru (5)</button>
+      </div>
+    </div>
+
+    <div class="queue-table">
+      <div class="qt-head">
+        <span>Cerita</span>
+        <span>Negara</span>
+        <span>Umur</span>
+        <span>AI Status</span>
+        <span>Dihantar</span>
+        <span>Tindakan</span>
+      </div>
+
+      <!-- Row 1 -->
+      <div class="qt-row" id="row-1">
+        <div class="qt-story">
+          <div class="qt-cover" style="background:linear-gradient(135deg,#fde68a,#fca5a5)">🐰</div>
+          <div>
+            <div class="qt-story-title">The Moon Rabbit</div>
+            <div class="qt-story-author">✍️ Hana Sato</div>
+          </div>
+        </div>
+        <div class="qt-cell qt-flag">🇯🇵 Japan</div>
+        <div class="qt-cell">6–8 thn</div>
+        <div class="qt-cell"><span class="status-badge sb-ai-ok">✓ AI Clear</span></div>
+        <div class="qt-cell" style="font-family:var(--mono);font-size:0.7rem">2j lepas</div>
+        <div class="action-btns">
+          <button class="act-btn act-view" onclick="openModal('The Moon Rabbit','🐰','cov1','Hana Sato','🇯🇵 Japan')">👁 Semak</button>
+          <button class="act-btn act-approve" onclick="approveRow('row-1')">✓ Lulus</button>
+          <button class="act-btn act-reject" onclick="rejectRow('row-1')">✕</button>
+        </div>
+      </div>
+
+      <!-- Row 2 -->
+      <div class="qt-row" id="row-2">
+        <div class="qt-story">
+          <div class="qt-cover" style="background:linear-gradient(135deg,#bfdbfe,#c7d2fe)">🐯</div>
+          <div>
+            <div class="qt-story-title">Tiger & Persimmon</div>
+            <div class="qt-story-author">✍️ Kim Jisoo</div>
+          </div>
+        </div>
+        <div class="qt-cell qt-flag">🇰🇷 Korea</div>
+        <div class="qt-cell">6–8 thn</div>
+        <div class="qt-cell"><span class="status-badge sb-ai-ok">✓ AI Clear</span></div>
+        <div class="qt-cell" style="font-family:var(--mono);font-size:0.7rem">5j lepas</div>
+        <div class="action-btns">
+          <button class="act-btn act-view" onclick="openModal('Tiger & Persimmon','🐯','cov2','Kim Jisoo','🇰🇷 Korea')">👁 Semak</button>
+          <button class="act-btn act-approve" onclick="approveRow('row-2')">✓ Lulus</button>
+          <button class="act-btn act-reject" onclick="rejectRow('row-2')">✕</button>
+        </div>
+      </div>
+
+      <!-- Row 3 — AI FLAGGED -->
+      <div class="qt-row" id="row-3" style="background:rgba(255,107,107,0.03)">
+        <div class="qt-story">
+          <div class="qt-cover" style="background:linear-gradient(135deg,#fee2e2,#fecaca)">👾</div>
+          <div>
+            <div class="qt-story-title">The Dark Forest Monster</div>
+            <div class="qt-story-author">✍️ Unknown User</div>
+          </div>
+        </div>
+        <div class="qt-cell qt-flag">🌍 Unknown</div>
+        <div class="qt-cell">9–12 thn</div>
+        <div class="qt-cell"><span class="status-badge sb-ai-flag">⚠ AI Flag</span></div>
+        <div class="qt-cell" style="font-family:var(--mono);font-size:0.7rem">1h lepas</div>
+        <div class="action-btns">
+          <button class="act-btn act-view" onclick="openModal('Dark Forest Monster','👾','cov-red','Unknown User','🌍 Unknown')">👁 Semak</button>
+          <button class="act-btn act-approve" onclick="approveRow('row-3')">✓ Lulus</button>
+          <button class="act-btn act-reject" onclick="rejectRow('row-3')">✕</button>
+        </div>
+      </div>
+
+      <!-- Row 4 -->
+      <div class="qt-row" id="row-4">
+        <div class="qt-story">
+          <div class="qt-cover" style="background:linear-gradient(135deg,#d1fae5,#a7f3d0)">🦋</div>
+          <div>
+            <div class="qt-story-title">Si Rama-Rama Emas</div>
+            <div class="qt-story-author">✍️ Nurul Ain</div>
+          </div>
+        </div>
+        <div class="qt-cell qt-flag">🇲🇾 Malaysia</div>
+        <div class="qt-cell">3–5 thn</div>
+        <div class="qt-cell"><span class="status-badge sb-ai-ok">✓ AI Clear</span></div>
+        <div class="qt-cell" style="font-family:var(--mono);font-size:0.7rem">semalam</div>
+        <div class="action-btns">
+          <button class="act-btn act-view" onclick="openModal('Si Rama-Rama Emas','🦋','cov3','Nurul Ain','🇲🇾 Malaysia')">👁 Semak</button>
+          <button class="act-btn act-approve" onclick="approveRow('row-4')">✓ Lulus</button>
+          <button class="act-btn act-reject" onclick="rejectRow('row-4')">✕</button>
+        </div>
+      </div>
+
+      <!-- Row 5 -->
+      <div class="qt-row" id="row-5">
+        <div class="qt-story">
+          <div class="qt-cover" style="background:linear-gradient(135deg,#fce7f3,#fbcfe8)">🐘</div>
+          <div>
+            <div class="qt-story-title">Ganesha's Little Friend</div>
+            <div class="qt-story-author">✍️ Priya Sharma</div>
+          </div>
+        </div>
+        <div class="qt-cell qt-flag">🇮🇳 India</div>
+        <div class="qt-cell">6–8 thn</div>
+        <div class="qt-cell"><span class="status-badge sb-pending">⏳ Pending</span></div>
+        <div class="qt-cell" style="font-family:var(--mono);font-size:0.7rem">2h lepas</div>
+        <div class="action-btns">
+          <button class="act-btn act-view" onclick="openModal('Ganesha\'s Little Friend','🐘','cov4','Priya Sharma','🇮🇳 India')">👁 Semak</button>
+          <button class="act-btn act-approve" onclick="approveRow('row-5')">✓ Lulus</button>
+          <button class="act-btn act-reject" onclick="rejectRow('row-5')">✕</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM GRID -->
+    <div class="bottom-grid">
+
+      <!-- Bar Chart — Submissions per day -->
+      <div class="chart-card">
+        <div class="cc-title">📈 Submission 7 Hari Lepas</div>
+        <div class="bar-chart" id="bar-chart">
+          <!-- injected by JS -->
+        </div>
+      </div>
+
+      <!-- Donut — Category breakdown -->
+      <div class="chart-card">
+        <div class="cc-title">🥧 Cerita Mengikut Kategori</div>
+        <div class="donut-wrap">
+          <svg class="donut-svg" width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="35" fill="none" stroke="#1e1e35" stroke-width="18"/>
+            <circle cx="50" cy="50" r="35" fill="none" stroke="#a78bfa" stroke-width="18"
+              stroke-dasharray="66 154" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+            <circle cx="50" cy="50" r="35" fill="none" stroke="#06d6a0" stroke-width="18"
+              stroke-dasharray="40 180" stroke-dashoffset="-66" transform="rotate(-90 50 50)"/>
+            <circle cx="50" cy="50" r="35" fill="none" stroke="#ffd166" stroke-width="18"
+              stroke-dasharray="28 192" stroke-dashoffset="-106" transform="rotate(-90 50 50)"/>
+            <circle cx="50" cy="50" r="35" fill="none" stroke="#38bdf8" stroke-width="18"
+              stroke-dasharray="22 198" stroke-dashoffset="-134" transform="rotate(-90 50 50)"/>
+            <circle cx="50" cy="50" r="35" fill="none" stroke="#f472b6" stroke-width="18"
+              stroke-dasharray="64 156" stroke-dashoffset="-156" transform="rotate(-90 50 50)"/>
+          </svg>
+          <div class="donut-legend">
+            <div class="dl-item"><div class="dl-dot" style="background:#a78bfa"></div><span class="dl-label">Fairy Tales</span><span class="dl-pct">30%</span></div>
+            <div class="dl-item"><div class="dl-dot" style="background:#06d6a0"></div><span class="dl-label">Animal</span><span class="dl-pct">18%</span></div>
+            <div class="dl-item"><div class="dl-dot" style="background:#ffd166"></div><span class="dl-label">Bedtime</span><span class="dl-pct">14%</span></div>
+            <div class="dl-item"><div class="dl-dot" style="background:#38bdf8"></div><span class="dl-label">Adventure</span><span class="dl-pct">10%</span></div>
+            <div class="dl-item"><div class="dl-dot" style="background:#f472b6"></div><span class="dl-label">Lain-lain</span><span class="dl-pct">28%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top countries -->
+      <div class="chart-card">
+        <div class="cc-title">🌍 Top Negara Penyumbang</div>
+        <div class="country-list-admin">
+          <div class="cla-item"><span class="cla-flag">🇯🇵</span><span class="cla-name">Japan</span><div class="cla-bar-wrap"><div class="cla-bar" style="width:100%"></div></div><span class="cla-count">520</span></div>
+          <div class="cla-item"><span class="cla-flag">🇲🇾</span><span class="cla-name">Malaysia</span><div class="cla-bar-wrap"><div class="cla-bar" style="width:65%"></div></div><span class="cla-count">340</span></div>
+          <div class="cla-item"><span class="cla-flag">🇮🇳</span><span class="cla-name">India</span><div class="cla-bar-wrap"><div class="cla-bar" style="width:60%"></div></div><span class="cla-count">310</span></div>
+          <div class="cla-item"><span class="cla-flag">🇰🇷</span><span class="cla-name">Korea</span><div class="cla-bar-wrap"><div class="cla-bar" style="width:54%"></div></div><span class="cla-count">280</span></div>
+          <div class="cla-item"><span class="cla-flag">🇨🇳</span><span class="cla-name">China</span><div class="cla-bar-wrap"><div class="cla-bar" style="width:46%"></div></div><span class="cla-count">240</span></div>
+          <div class="cla-item"><span class="cla-flag">🇮🇩</span><span class="cla-name">Indonesia</span><div class="cla-bar-wrap"><div class="cla-bar" style="width:37%"></div></div><span class="cla-count">190</span></div>
+        </div>
+      </div>
+
+      <!-- Recent Users -->
+      <div class="chart-card">
+        <div class="cc-title">👤 Pengguna Baru Terkini</div>
+        <div class="user-list">
+          <div class="ul-item"><div class="ul-avatar" style="background:linear-gradient(135deg,#fde68a,#fca5a5)">🌸</div><div><div class="ul-name">Hana Sato</div><div class="ul-meta">🇯🇵 Japan · 2j lepas</div></div><span class="ul-badge ub-writer">Penulis</span></div>
+          <div class="ul-item"><div class="ul-avatar" style="background:linear-gradient(135deg,#bfdbfe,#c7d2fe)">👦</div><div><div class="ul-name">Ahmad Zulkifli</div><div class="ul-meta">🇲🇾 Malaysia · 4j lepas</div></div><span class="ul-badge ub-reader">Pembaca</span></div>
+          <div class="ul-item"><div class="ul-avatar" style="background:linear-gradient(135deg,#d1fae5,#a7f3d0)">👩</div><div><div class="ul-name">Priya Sharma</div><div class="ul-meta">🇮🇳 India · 6j lepas</div></div><span class="ul-badge ub-writer">Penulis</span></div>
+          <div class="ul-item"><div class="ul-avatar" style="background:linear-gradient(135deg,#e9d5ff,#ddd6fe)">🧒</div><div><div class="ul-name">Sofia Chen</div><div class="ul-meta">🇸🇬 Singapore · semalam</div></div><span class="ul-badge ub-reader">Pembaca</span></div>
+          <div class="ul-item"><div class="ul-avatar" style="background:linear-gradient(135deg,#fce7f3,#fbcfe8)">👨</div><div><div class="ul-name">Emeka Obi</div><div class="ul-meta">🇳🇬 Nigeria · semalam</div></div><span class="ul-badge ub-writer">Penulis</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- REVIEW MODAL -->
+<div class="modal-overlay" id="review-modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title" id="modal-title">Semak Cerita</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-story-meta">
+        <div class="modal-cover" id="modal-cover" style="background:linear-gradient(135deg,#fde68a,#fca5a5)">🐰</div>
+        <div class="modal-info">
+          <h3 id="modal-story-title">The Moon Rabbit</h3>
+          <p id="modal-story-meta">✍️ Hana Sato · 🇯🇵 Japan · Fairy Tales · 6–8 tahun<br>8 panels · Dihantar 2 jam lepas</p>
+        </div>
+      </div>
+
+      <div class="modal-ai-result">
+        <div class="mar-title">🤖 Keputusan AI Moderation</div>
+        <div class="mar-item"><span class="mar-check">✓</span> Tiada kandungan berbahaya dikesan</div>
+        <div class="mar-item"><span class="mar-check">✓</span> Sesuai untuk kanak-kanak (6–8 tahun)</div>
+        <div class="mar-item"><span class="mar-check">✓</span> Tiada bahasa tidak sopan</div>
+        <div class="mar-item"><span class="mar-check">✓</span> Gambar telah dianalisis — selamat</div>
+        <div class="mar-item" style="color:var(--mint);font-weight:700;margin-top:4px">✅ Skor Keselamatan: 98/100</div>
+      </div>
+
+      <div class="modal-panels-preview">
+        <div class="mpp-title">Preview Panel</div>
+        <div class="mpp-scroll">
+          <div class="mpp-thumb" style="background:linear-gradient(135deg,#1a1a3e,#2d1b69)">🌕</div>
+          <div class="mpp-thumb" style="background:linear-gradient(135deg,#1a2e2a,#064e3b)">🐰</div>
+          <div class="mpp-thumb" style="background:linear-gradient(135deg,#2e1a1a,#7c2d12)">💭</div>
+          <div class="mpp-thumb" style="background:linear-gradient(135deg,#1e1a2e,#4c1d95)">⭐</div>
+          <div class="mpp-thumb" style="background:linear-gradient(135deg,#172a1e,#14532d)">💌</div>
+          <div class="mpp-thumb" style="background:linear-gradient(135deg,#2e2a1a,#78350f)">🚀</div>
+          <div class="mpp-thumb" style="background:linear-gradient(135deg,#1a1a2e,#312e81)">🤝</div>
+          <div class="mpp-thumb" style="background:linear-gradient(135deg,#2e1a2e,#6b21a8)">🌈</div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="ma-btn ma-approve" onclick="closeModal();alert('✅ Cerita telah diluluskan dan akan diterbitkan!')">✅ Luluskan & Terbit</button>
+        <button class="ma-btn ma-revise" onclick="closeModal();alert('📝 Permintaan semakan telah dihantar kepada penulis.')">📝 Minta Semakan</button>
+        <button class="ma-btn ma-reject" onclick="closeModal();alert('❌ Cerita telah ditolak.')">❌ Tolak</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── COUNTER ANIMATION ──
+function animCount(id, target, suffix='') {
+  let v = 0; const step = target / 40;
+  const t = setInterval(() => {
+    v = Math.min(v + step, target);
+    document.getElementById(id).textContent = Math.floor(v).toLocaleString() + suffix;
+    if (v >= target) clearInterval(t);
+  }, 30);
+}
+setTimeout(() => {
+  animCount('sc1', 5240);
+  animCount('sc2', 7);
+  animCount('sc3', 2480);
+  animCount('sc4', 18400);
+}, 300);
+
+// ── BAR CHART ──
+const days = ['Isn','Sel','Rab','Kha','Jum','Sab','Ahd'];
+const vals = [14, 22, 18, 31, 28, 42, 35];
+const colors = ['#a78bfa','#06d6a0','#a78bfa','#ffd166','#a78bfa','#ff6b6b','#38bdf8'];
+const maxV = Math.max(...vals);
+const chart = document.getElementById('bar-chart');
+days.forEach((d, i) => {
+  const wrap = document.createElement('div');
+  wrap.className = 'bar-wrap';
+  const bar = document.createElement('div');
+  bar.className = 'bar';
+  bar.style.cssText = `height:0;background:${colors[i]};`;
+  const lbl = document.createElement('div');
+  lbl.className = 'bar-lbl'; lbl.textContent = d;
+  const val = document.createElement('div');
+  val.className = 'bar-val'; val.textContent = vals[i];
+  wrap.appendChild(val); wrap.appendChild(bar); wrap.appendChild(lbl);
+  chart.appendChild(wrap);
+  setTimeout(() => { bar.style.height = Math.round((vals[i]/maxV)*90) + 'px'; }, 400 + i * 80);
+});
+
+// ── SIDEBAR ──
+function setActive(el) {
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── ROW ACTIONS ──
+function approveRow(id) {
+  const row = document.getElementById(id);
+  row.style.opacity = '0'; row.style.transform = 'translateX(20px)';
+  row.style.transition = 'all 0.3s';
+  setTimeout(() => row.remove(), 300);
+  // update count
+  const cnt = document.getElementById('sc2');
+  cnt.textContent = Math.max(0, parseInt(cnt.textContent) - 1);
+}
+function rejectRow(id) {
+  const row = document.getElementById(id);
+  row.style.background = 'rgba(255,107,107,0.05)';
+  row.style.opacity = '0'; row.style.transform = 'translateX(-20px)';
+  row.style.transition = 'all 0.3s';
+  setTimeout(() => row.remove(), 300);
+  const cnt = document.getElementById('sc2');
+  cnt.textContent = Math.max(0, parseInt(cnt.textContent) - 1);
+}
+
+// ── MODAL ──
+function openModal(title, emoji, cov, author, country) {
+  document.getElementById('modal-title').textContent = '📖 Semak: ' + title;
+  document.getElementById('modal-story-title').textContent = title;
+  document.getElementById('modal-story-meta').innerHTML = `✍️ ${author} · ${country} · Fairy Tales · 6–8 tahun<br>8 panels · Dihantar tadi`;
+  document.getElementById('modal-cover').textContent = emoji;
+  document.getElementById('review-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('review-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Treasury counters
+const ncTargets = {nc1:500000, nc2:15400, nc3:120000, nc4:5};
+Object.entries(ncTargets).forEach(([id,target]) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  let v = 0; const step = target/50;
+  const t = setInterval(() => {
+    v = Math.min(v+step, target);
+    if (id === 'nc2') el.textContent = 'RM ' + Math.floor(v).toLocaleString();
+    else el.textContent = Math.floor(v).toLocaleString();
+    if (v >= target) clearInterval(t);
+  }, 30);
+});
+
+function approveWithdraw(btn, name, amount) {
+  const row = btn.closest('tr');
+  row.querySelector('td:nth-child(5)').innerHTML = '<span style="font-size:0.62rem;font-weight:800;padding:2px 8px;border-radius:6px;background:rgba(6,214,160,0.12);color:var(--mint)">✓ Dibayar</span>';
+  row.querySelector('td:nth-child(6)').innerHTML = '<span style="font-size:0.68rem;color:var(--muted)">Selesai</span>';
+  showToast('💸 ' + amount + ' dibayar kepada ' + name);
+}
+function rejectWithdraw(btn) {
+  const row = btn.closest('tr');
+  row.querySelector('td:nth-child(5)').innerHTML = '<span style="font-size:0.62rem;font-weight:800;padding:2px 8px;border-radius:6px;background:rgba(255,107,107,0.1);color:var(--coral)">✕ Ditolak</span>';
+  row.querySelector('td:nth-child(6)').innerHTML = '<span style="font-size:0.68rem;color:var(--muted)">—</span>';
+  showToast('✕ Permohonan withdraw ditolak');
+}
+</script>
+</body>
+</html>

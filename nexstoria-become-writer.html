@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jadi Penulis — NexStoria</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --coral:#ff6b6b;--coral2:#ff4757;
+  --lav:#a78bfa;--lav2:#7c3aed;
+  --mint:#06d6a0;--sun:#ffd166;
+  --sky:#38bdf8;--pink:#f472b6;
+  --ink:#0a0a14;--bg:#07070f;
+  --card:#0f0f1c;--border:#1a1a30;
+  --text:#c8c8e0;--muted:#3a3a5a;--soft:#7070a0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(7,7,15,0.94);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  height:60px;padding:0 2rem;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;color:var(--coral);text-decoration:none;}
+.nav-logo em{color:var(--lav);font-style:normal;}
+.nav-right{display:flex;align-items:center;gap:0.75rem;}
+.nav-link{font-size:0.8rem;font-weight:700;color:var(--soft);text-decoration:none;transition:color 0.2s;padding:4px 8px;}
+.nav-link:hover{color:white;}
+.nav-cta{
+  font-family:'Nunito',sans-serif;font-weight:800;font-size:0.8rem;
+  padding:8px 18px;border-radius:10px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--coral),var(--coral2));
+  color:white;box-shadow:0 3px 12px rgba(255,107,107,0.3);transition:all 0.2s;
+}
+.nav-cta:hover{transform:translateY(-1px);}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:80px 2rem 4rem;position:relative;overflow:hidden;text-align:center;
+}
+.hero-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 30%,rgba(255,107,107,0.07) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 60% at 80% 70%,rgba(167,139,250,0.08) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 40% at 50% 10%,rgba(255,209,102,0.05) 0%,transparent 50%);
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px);
+  background-size:48px 48px;
+}
+.hero-content{position:relative;z-index:2;max-width:760px;}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,209,102,0.08);border:1px solid rgba(255,209,102,0.2);
+  border-radius:20px;padding:6px 16px;
+  font-size:0.72rem;font-weight:800;color:var(--sun);
+  margin-bottom:1.5rem;letter-spacing:0.05em;
+  animation:fadeDown 0.5s ease both;
+}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-12px);}to{opacity:1;transform:translateY(0);}}
+.hero-title{
+  font-family:'Baloo 2',cursive;
+  font-size:clamp(2.5rem,6vw,4.5rem);
+  font-weight:800;line-height:1.05;
+  color:white;margin-bottom:1rem;
+  animation:fadeUp 0.6s ease 0.1s both;
+}
+.hero-title .hl-coral{color:var(--coral);}
+.hero-title .hl-lav{color:var(--lav);}
+.hero-title .hl-sun{color:var(--sun);}
+.hero-sub{
+  font-family:'Lora',serif;font-style:italic;
+  font-size:1.1rem;color:var(--soft);line-height:1.8;
+  max-width:540px;margin:0 auto 2rem;
+  animation:fadeUp 0.6s ease 0.2s both;
+}
+.hero-btns{
+  display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;
+  animation:fadeUp 0.6s ease 0.3s both;
+}
+.hb-primary{
+  font-family:'Nunito',sans-serif;font-weight:800;font-size:0.95rem;
+  padding:14px 32px;border-radius:14px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--lav),var(--lav2));
+  color:white;box-shadow:0 6px 20px rgba(124,58,237,0.35);
+  transition:all 0.2s;display:flex;align-items:center;gap:8px;
+}
+.hb-primary:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(124,58,237,0.45);}
+.hb-secondary{
+  font-family:'Nunito',sans-serif;font-weight:800;font-size:0.95rem;
+  padding:14px 28px;border-radius:14px;cursor:pointer;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.12);color:white;
+  transition:all 0.2s;
+}
+.hb-secondary:hover{background:rgba(255,255,255,0.1);}
+
+/* floating writers */
+.hero-writers{
+  display:flex;align-items:center;justify-content:center;gap:-8px;
+  margin-top:2rem;animation:fadeUp 0.6s ease 0.4s both;
+}
+.hw-ava{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;border:2px solid var(--bg);margin-left:-8px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.4);
+}
+.hw-text{margin-left:10px;font-size:0.75rem;color:var(--soft);text-align:left;}
+.hw-text strong{color:white;display:block;}
+
+/* scroll cue */
+.scroll-cue{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  animation:bounce 2s ease-in-out infinite;color:var(--muted);font-size:0.65rem;font-weight:700;
+}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(6px);}}
+
+/* ── SECTIONS ── */
+section{padding:5rem 2rem;max-width:1060px;margin:0 auto;}
+.sec-tag{
+  display:inline-block;font-size:0.68rem;font-weight:800;
+  letter-spacing:0.12em;text-transform:uppercase;
+  padding:4px 12px;border-radius:8px;margin-bottom:0.75rem;
+}
+.tag-coral{background:rgba(255,107,107,0.1);color:var(--coral);border:1px solid rgba(255,107,107,0.2);}
+.tag-lav{background:rgba(167,139,250,0.1);color:var(--lav);border:1px solid rgba(167,139,250,0.2);}
+.tag-sun{background:rgba(255,209,102,0.1);color:var(--sun);border:1px solid rgba(255,209,102,0.2);}
+.tag-mint{background:rgba(6,214,160,0.1);color:var(--mint);border:1px solid rgba(6,214,160,0.2);}
+.sec-heading{
+  font-family:'Baloo 2',cursive;
+  font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;
+  color:white;line-height:1.1;margin-bottom:0.75rem;
+}
+.sec-sub{font-size:0.9rem;color:var(--soft);line-height:1.8;max-width:520px;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.5s ease,transform 0.5s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* ── WHY WRITE ── */
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2.5rem;}
+.why-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:1.8rem 1.5rem;
+  transition:all 0.3s;cursor:default;
+  position:relative;overflow:hidden;
+}
+.why-card::before{
+  content:'';position:absolute;inset:0;border-radius:20px;
+  opacity:0;transition:opacity 0.3s;
+}
+.why-card:hover{transform:translateY(-5px);}
+.why-card:hover::before{opacity:1;}
+.wc1::before{background:linear-gradient(135deg,rgba(255,107,107,0.05),transparent);}
+.wc2::before{background:linear-gradient(135deg,rgba(167,139,250,0.05),transparent);}
+.wc3::before{background:linear-gradient(135deg,rgba(255,209,102,0.05),transparent);}
+.wc4::before{background:linear-gradient(135deg,rgba(6,214,160,0.05),transparent);}
+.wc5::before{background:linear-gradient(135deg,rgba(56,189,248,0.05),transparent);}
+.wc6::before{background:linear-gradient(135deg,rgba(244,114,182,0.05),transparent);}
+.wc-icon{font-size:2.2rem;margin-bottom:0.9rem;display:block;}
+.wc-title{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;color:white;margin-bottom:0.5rem;}
+.wc-desc{font-size:0.78rem;color:var(--soft);line-height:1.7;}
+.wc-stat{
+  margin-top:1rem;font-family:'Baloo 2',cursive;
+  font-size:1.3rem;font-weight:800;
+}
+
+/* ── HOW IT WORKS ── */
+.steps-wrap{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1rem;margin-top:2.5rem;position:relative;
+}
+.steps-wrap::before{
+  content:'';position:absolute;
+  top:36px;left:12%;right:12%;height:2px;
+  background:linear-gradient(90deg,var(--coral),var(--lav),var(--mint),var(--sun));
+  opacity:0.2;z-index:0;
+}
+.step-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:18px;padding:1.5rem 1.2rem;text-align:center;
+  position:relative;z-index:1;transition:all 0.25s;
+}
+.step-card:hover{transform:translateY(-4px);border-color:rgba(167,139,250,0.3);}
+.step-num{
+  width:42px;height:42px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;
+  margin:0 auto 0.9rem;
+}
+.sn1{background:rgba(255,107,107,0.12);color:var(--coral);border:1px solid rgba(255,107,107,0.2);}
+.sn2{background:rgba(167,139,250,0.12);color:var(--lav);border:1px solid rgba(167,139,250,0.2);}
+.sn3{background:rgba(6,214,160,0.12);color:var(--mint);border:1px solid rgba(6,214,160,0.2);}
+.sn4{background:rgba(255,209,102,0.12);color:var(--sun);border:1px solid rgba(255,209,102,0.2);}
+.step-icon{font-size:1.8rem;display:block;margin-bottom:0.5rem;}
+.step-title{font-family:'Baloo 2',cursive;font-size:0.88rem;font-weight:800;color:white;margin-bottom:0.4rem;}
+.step-desc{font-size:0.72rem;color:var(--soft);line-height:1.6;}
+
+/* ── PERKS ── */
+.perks-split{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;margin-top:2rem;}
+.perk-list{display:flex;flex-direction:column;gap:0.75rem;}
+.perk-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:1rem 1.2rem;border-radius:14px;
+  background:var(--card);border:1px solid var(--border);transition:all 0.2s;
+}
+.perk-item:hover{border-color:rgba(167,139,250,0.3);transform:translateX(4px);}
+.perk-icon{font-size:1.5rem;flex-shrink:0;margin-top:1px;}
+.perk-title{font-weight:800;font-size:0.82rem;color:white;margin-bottom:2px;}
+.perk-desc{font-size:0.72rem;color:var(--soft);line-height:1.6;}
+
+.author-showcase{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:24px;padding:2rem;
+}
+.as-label{font-size:0.65rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1.2rem;}
+.as-authors{display:flex;flex-direction:column;gap:0.75rem;}
+.as-author{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:12px;
+  background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);
+  transition:all 0.2s;cursor:pointer;
+}
+.as-author:hover{background:rgba(255,255,255,0.05);}
+.as-ava{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.as-name{font-weight:800;font-size:0.8rem;color:white;}
+.as-country{font-size:0.65rem;color:var(--soft);}
+.as-reads{margin-left:auto;font-family:'Baloo 2',cursive;font-size:0.8rem;font-weight:800;color:var(--sun);}
+
+/* ── REQUIREMENTS ── */
+.req-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem;}
+.req-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:1.3rem;
+}
+.rc-title{font-weight:800;font-size:0.82rem;color:white;margin-bottom:0.75rem;display:flex;align-items:center;gap:7px;}
+.rc-list{display:flex;flex-direction:column;gap:6px;}
+.rc-item{display:flex;align-items:flex-start;gap:8px;font-size:0.76rem;color:var(--soft);}
+.rc-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+
+/* ── APPLICATION FORM ── */
+.form-wrap{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:24px;padding:2.5rem;margin-top:2rem;
+  max-width:640px;margin-left:auto;margin-right:auto;
+}
+.form-step-bar{
+  display:flex;gap:6px;margin-bottom:2rem;
+}
+.fsb-item{
+  flex:1;height:4px;border-radius:2px;
+  background:rgba(255,255,255,0.06);transition:background 0.4s;
+}
+.fsb-item.done{background:var(--lav);}
+.fsb-item.active{background:linear-gradient(90deg,var(--lav),var(--coral));}
+
+.form-step{display:none;}
+.form-step.active{display:block;animation:fadeUp 0.35s ease both;}
+
+.form-step-title{
+  font-family:'Baloo 2',cursive;font-size:1.3rem;font-weight:800;
+  color:white;margin-bottom:0.4rem;
+}
+.form-step-sub{font-size:0.8rem;color:var(--soft);margin-bottom:1.5rem;line-height:1.6;}
+
+.form-group{margin-bottom:1.1rem;}
+.form-label{font-size:0.76rem;font-weight:800;color:white;margin-bottom:0.4rem;display:block;}
+.form-input,.form-textarea,.form-select{
+  width:100%;font-family:'Nunito',sans-serif;font-size:0.85rem;
+  background:rgba(255,255,255,0.04);
+  border:1.5px solid rgba(255,255,255,0.08);
+  border-radius:12px;padding:10px 14px;color:white;
+  transition:border-color 0.2s;outline:none;
+}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--muted);}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--lav);}
+.form-textarea{min-height:100px;resize:vertical;line-height:1.7;}
+.form-select option{background:#0f0f1c;}
+
+/* category chips */
+.cat-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.cat-chip{
+  font-size:0.72rem;font-weight:800;
+  padding:6px 13px;border-radius:9px;cursor:pointer;
+  background:rgba(255,255,255,0.04);
+  border:1.5px solid rgba(255,255,255,0.08);color:var(--soft);
+  transition:all 0.18s;
+}
+.cat-chip:hover{border-color:var(--lav);color:var(--lav);}
+.cat-chip.selected{background:rgba(167,139,250,0.12);border-color:var(--lav);color:var(--lav);}
+
+/* lang chips */
+.lang-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.lang-chip{
+  font-size:0.72rem;font-weight:800;
+  padding:6px 12px;border-radius:9px;cursor:pointer;
+  background:rgba(255,255,255,0.04);
+  border:1.5px solid rgba(255,255,255,0.08);color:var(--soft);
+  transition:all 0.18s;
+}
+.lang-chip:hover{border-color:var(--mint);color:var(--mint);}
+.lang-chip.selected{background:rgba(6,214,160,0.1);border-color:var(--mint);color:var(--mint);}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;}
+.form-note{font-size:0.7rem;color:var(--muted);margin-top:4px;line-height:1.6;}
+
+.form-btns{display:flex;gap:0.6rem;margin-top:1.5rem;justify-content:space-between;}
+.fb-back{
+  font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;
+  padding:10px 20px;border-radius:11px;cursor:pointer;
+  background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.08);
+  color:var(--soft);transition:all 0.2s;
+}
+.fb-back:hover{border-color:var(--soft);color:white;}
+.fb-next{
+  font-family:'Nunito',sans-serif;font-weight:800;font-size:0.85rem;
+  padding:10px 28px;border-radius:11px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--lav),var(--lav2));
+  color:white;box-shadow:0 4px 14px rgba(124,58,237,0.3);
+  transition:all 0.2s;display:flex;align-items:center;gap:6px;
+}
+.fb-next:hover{transform:translateY(-1px);}
+
+/* success screen */
+.success-screen{
+  text-align:center;padding:2rem 1rem;display:none;
+}
+.ss-icon{font-size:4rem;display:block;margin-bottom:1rem;animation:popBounce 0.6s cubic-bezier(0.34,1.56,0.64,1) both;}
+@keyframes popBounce{from{transform:scale(0);}to{transform:scale(1);}}
+.ss-title{font-family:'Baloo 2',cursive;font-size:1.8rem;font-weight:800;color:white;margin-bottom:0.5rem;}
+.ss-sub{font-size:0.85rem;color:var(--soft);line-height:1.8;margin-bottom:1.5rem;max-width:380px;margin-left:auto;margin-right:auto;}
+.ss-steps{
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;padding:1.2rem;margin-bottom:1.5rem;
+  text-align:left;
+}
+.ss-step{display:flex;align-items:center;gap:10px;font-size:0.78rem;color:var(--soft);padding:6px 0;}
+.ss-step strong{color:white;}
+.ss-dot{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;flex-shrink:0;}
+.sd-done{background:rgba(6,214,160,0.15);color:var(--mint);}
+.sd-wait{background:rgba(255,209,102,0.1);color:var(--sun);}
+.sd-lock{background:rgba(255,255,255,0.04);color:var(--muted);}
+.ss-btn{
+  font-family:'Nunito',sans-serif;font-weight:800;font-size:0.88rem;
+  padding:12px 28px;border-radius:13px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--lav),var(--lav2));
+  color:white;box-shadow:0 4px 16px rgba(124,58,237,0.3);transition:all 0.2s;
+}
+.ss-btn:hover{transform:translateY(-2px);}
+
+/* ── FAQ ── */
+.faq-list{display:flex;flex-direction:column;gap:0.6rem;margin-top:2rem;max-width:660px;margin-left:auto;margin-right:auto;}
+.faq-item{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;cursor:pointer;transition:border-color 0.2s;
+}
+.faq-item:hover{border-color:rgba(167,139,250,0.3);}
+.faq-item.open{border-color:rgba(167,139,250,0.3);}
+.faq-q{
+  padding:1rem 1.2rem;font-weight:800;font-size:0.85rem;color:white;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  user-select:none;
+}
+.faq-arrow{font-size:0.8rem;color:var(--soft);transition:transform 0.3s;}
+.faq-item.open .faq-arrow{transform:rotate(180deg);}
+.faq-a{
+  max-height:0;overflow:hidden;transition:max-height 0.35s ease;
+  font-size:0.78rem;color:var(--soft);line-height:1.8;
+}
+.faq-a-inner{padding:0 1.2rem 1rem;}
+
+/* ── CTA BANNER ── */
+.cta-banner{
+  margin:2rem auto;max-width:1060px;padding:0 2rem;
+}
+.cta-inner{
+  background:linear-gradient(135deg,rgba(167,139,250,0.1),rgba(255,107,107,0.08));
+  border:1px solid rgba(167,139,250,0.2);
+  border-radius:28px;padding:3rem 2rem;text-align:center;
+  position:relative;overflow:hidden;
+}
+.cta-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 30% 50%,rgba(167,139,250,0.06),transparent 50%),
+             radial-gradient(circle at 70% 50%,rgba(255,107,107,0.05),transparent 50%);
+}
+.cta-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:white;margin-bottom:0.5rem;position:relative;}
+.cta-sub{font-size:0.88rem;color:var(--soft);margin-bottom:1.5rem;position:relative;}
+.cta-btn{
+  font-family:'Nunito',sans-serif;font-weight:800;font-size:0.95rem;
+  padding:14px 36px;border-radius:14px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--lav),var(--lav2));
+  color:white;box-shadow:0 6px 20px rgba(124,58,237,0.35);
+  transition:all 0.2s;position:relative;display:inline-flex;align-items:center;gap:8px;
+}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(124,58,237,0.45);}
+
+/* ── FOOTER ── */
+footer{
+  text-align:center;padding:2.5rem 2rem;
+  border-top:1px solid rgba(255,255,255,0.05);
+  font-size:0.72rem;color:var(--muted);
+}
+footer a{color:var(--soft);text-decoration:none;}
+footer a:hover{color:white;}
+
+/* responsive */
+@media(max-width:900px){
+  .why-grid{grid-template-columns:1fr 1fr;}
+  .steps-wrap{grid-template-columns:1fr 1fr;}
+  .steps-wrap::before{display:none;}
+  .perks-split{grid-template-columns:1fr;}
+  .req-grid{grid-template-columns:1fr;}
+}
+@media(max-width:560px){
+  .why-grid{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
+  .form-wrap{padding:1.5rem;}
+  .hero-title{font-size:2.2rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">Nex<em>Storia</em> 🌏</a>
+  <div class="nav-right">
+    <a class="nav-link" href="#">Explore</a>
+    <a class="nav-link" href="#">Penulis</a>
+    <button class="nav-cta" onclick="scrollToForm()">✍️ Daftar Sekarang</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag">✨ Program Penulis NexStoria — Terbuka Untuk Semua</div>
+    <h1 class="hero-title">
+      Cerita Kamu<br>
+      <span class="hl-coral">Layak</span> Dibaca<br>
+      <span class="hl-lav">Seluruh</span> <span class="hl-sun">Dunia</span>
+    </h1>
+    <p class="hero-sub">
+      Dari pembaca kepada penulis — satu langkah mudah. Kongsikan cerita kanak-kanak kamu kepada jutaan pembaca dari 50+ negara dalam 13+ bahasa.
+    </p>
+    <div class="hero-btns">
+      <button class="hb-primary" onclick="scrollToForm()">✍️ Mula Sebagai Penulis</button>
+      <button class="hb-secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">Tahu Lebih Lanjut ↓</button>
+    </div>
+    <div class="hero-writers">
+      <div class="hw-ava" style="background:linear-gradient(135deg,#fde68a,#fca5a5)">🌸</div>
+      <div class="hw-ava" style="background:linear-gradient(135deg,#bfdbfe,#c7d2fe)">🐯</div>
+      <div class="hw-ava" style="background:linear-gradient(135deg,#d1fae5,#a7f3d0)">🦋</div>
+      <div class="hw-ava" style="background:linear-gradient(135deg,#fce7f3,#fbcfe8)">🐘</div>
+      <div class="hw-ava" style="background:linear-gradient(135deg,#e9d5ff,#ddd6fe)">🐉</div>
+      <div class="hw-text"><strong>1,240+ Penulis Aktif</strong>dari 50+ negara telah menyertai</div>
+    </div>
+  </div>
+  <div class="scroll-cue">↓ Tatal ke bawah</div>
+</div>
+
+<!-- WHY WRITE -->
+<section class="reveal">
+  <div class="sec-tag tag-coral">✨ Mengapa Menulis Di NexStoria?</div>
+  <h2 class="sec-heading">Platform Cerita Kanak-Kanak<br>Yang Menghubungkan Dunia</h2>
+  <div class="why-grid">
+    <div class="why-card wc1 reveal">
+      <span class="wc-icon">🌍</span>
+      <div class="wc-title">Pembaca Global</div>
+      <div class="wc-desc">Cerita kamu dibaca oleh kanak-kanak dari 50+ negara. Tanpa had sempadan, tanpa had bahasa.</div>
+      <div class="wc-stat" style="color:var(--coral)">50+ 🌍</div>
+    </div>
+    <div class="why-card wc2 reveal">
+      <span class="wc-icon">🤖</span>
+      <div class="wc-title">AI Terjemah Automatik</div>
+      <div class="wc-desc">Tulis dalam bahasa kamu. AI kami terjemahkan kepada 13+ bahasa secara automatik — percuma!</div>
+      <div class="wc-stat" style="color:var(--lav)">13+ 🌐</div>
+    </div>
+    <div class="why-card wc3 reveal">
+      <span class="wc-icon">🪙</span>
+      <div class="wc-title">Jana Pendapatan</div>
+      <div class="wc-desc">Terima tip token dari pembaca setia kamu. Lebih banyak pembaca = lebih banyak sokongan.</div>
+      <div class="wc-stat" style="color:var(--sun)">🪙 Token</div>
+    </div>
+    <div class="why-card wc4 reveal">
+      <span class="wc-icon">🎨</span>
+      <div class="wc-title">Format Webtoon</div>
+      <div class="wc-desc">Panel-panel visual yang menarik — format moden yang disukai kanak-kanak zaman sekarang.</div>
+      <div class="wc-stat" style="color:var(--mint)">📱 Mobile-First</div>
+    </div>
+    <div class="why-card wc5 reveal">
+      <span class="wc-icon">📊</span>
+      <div class="wc-title">Analytics Penulis</div>
+      <div class="wc-desc">Lihat berapa ramai yang membaca, dari mana mereka, dan panel mana yang paling disukai.</div>
+      <div class="wc-stat" style="color:var(--sky)">📈 Real-time</div>
+    </div>
+    <div class="why-card wc6 reveal">
+      <span class="wc-icon">🏆</span>
+      <div class="wc-title">Leaderboard & Fame</div>
+      <div class="wc-desc">Masuk carta Top Authors negara kamu. Bina nama sebagai penulis kanak-kanak global.</div>
+      <div class="wc-stat" style="color:var(--pink)">#1 Author 🥇</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="reveal">
+  <div class="sec-tag tag-lav">📋 Cara Ia Berfungsi</div>
+  <h2 class="sec-heading">4 Langkah Mudah<br>Jadi Penulis NexStoria</h2>
+  <div class="steps-wrap">
+    <div class="step-card reveal">
+      <div class="step-num sn1">01</div>
+      <span class="step-icon">📝</span>
+      <div class="step-title">Mohon & Daftar</div>
+      <div class="step-desc">Isi borang permohonan ringkas. Ceritakan sedikit tentang diri kamu dan jenis cerita yang ingin ditulis.</div>
+    </div>
+    <div class="step-card reveal">
+      <div class="step-num sn2">02</div>
+      <span class="step-icon">✅</span>
+      <div class="step-title">Semakan 24 Jam</div>
+      <div class="step-desc">Tim NexStoria akan semak permohonan kamu dalam masa 24 jam. Kami akan emailkan hasilnya.</div>
+    </div>
+    <div class="step-card reveal">
+      <div class="step-num sn3">03</div>
+      <span class="step-icon">🎨</span>
+      <div class="step-title">Bina Cerita Pertama</div>
+      <div class="step-desc">Akses Writer Dashboard dengan panel builder, upload gambar, dan AI translate semua dalam satu tempat.</div>
+    </div>
+    <div class="step-card reveal">
+      <div class="step-num sn4">04</div>
+      <span class="step-icon">🚀</span>
+      <div class="step-title">Terbitkan ke Dunia</div>
+      <div class="step-desc">Cerita kamu akan disemak kandungan, kemudian diterbitkan kepada pembaca seluruh dunia!</div>
+    </div>
+  </div>
+</section>
+
+<!-- PERKS -->
+<section class="reveal">
+  <div class="sec-tag tag-mint">🎁 Keistimewaan Penulis</div>
+  <h2 class="sec-heading">Apa Yang Kamu<br>Dapat Sebagai Penulis?</h2>
+  <div class="perks-split">
+    <div class="perk-list">
+      <div class="perk-item reveal"><span class="perk-icon">✍️</span><div><div class="perk-title">Writer Dashboard Eksklusif</div><div class="perk-desc">Panel builder Webtoon, upload gambar, edit cerita, semak analytics — semua dalam satu dashboard yang cantik.</div></div></div>
+      <div class="perk-item reveal"><span class="perk-icon">🌐</span><div><div class="perk-title">AI Translate 13+ Bahasa</div><div class="perk-desc">Tulis sekali — kami terjemahkan ke Melayu, English, Jepun, Korea, Arab, Mandarin dan lebih banyak lagi secara automatik.</div></div></div>
+      <div class="perk-item reveal"><span class="perk-icon">🪙</span><div><div class="perk-title">Sistem Tip Token</div><div class="perk-desc">Pembaca boleh hantar tip token kepada kamu terus dari halaman cerita. Satu cara mudah untuk mereka sokong kerja kamu.</div></div></div>
+      <div class="perk-item reveal"><span class="perk-icon">🏅</span><div><div class="perk-title">Badge Verified Author</div><div class="perk-desc">Profil penulis kamu akan mendapat tanda ✓ Verified dan muncul dalam carian NexStoria.</div></div></div>
+      <div class="perk-item reveal"><span class="perk-icon">📊</span><div><div class="perk-title">Analytics & Insights</div><div class="perk-desc">Lihat data pembacaan, negara pembaca, panel paling popular, dan pertumbuhan pengikut kamu secara real-time.</div></div></div>
+    </div>
+    <div class="author-showcase reveal">
+      <div class="as-label">🌟 Penulis Terbaik NexStoria</div>
+      <div class="as-authors">
+        <div class="as-author"><div class="as-ava" style="background:linear-gradient(135deg,#fde68a,#fca5a5)">🌸</div><div><div class="as-name">Hana Sato</div><div class="as-country">🇯🇵 Japan · 12 cerita</div></div><span class="as-reads">👁 84.2K</span></div>
+        <div class="as-author"><div class="as-ava" style="background:linear-gradient(135deg,#bfdbfe,#c7d2fe)">🐯</div><div><div class="as-name">Kim Jisoo</div><div class="as-country">🇰🇷 Korea · 8 cerita</div></div><span class="as-reads">👁 52.1K</span></div>
+        <div class="as-author"><div class="as-ava" style="background:linear-gradient(135deg,#d1fae5,#a7f3d0)">🦋</div><div><div class="as-name">Nurul Ain</div><div class="as-country">🇲🇾 Malaysia · 6 cerita</div></div><span class="as-reads">👁 38.7K</span></div>
+        <div class="as-author"><div class="as-ava" style="background:linear-gradient(135deg,#fce7f3,#fbcfe8)">🐘</div><div><div class="as-name">Priya Sharma</div><div class="as-country">🇮🇳 India · 9 cerita</div></div><span class="as-reads">👁 61.3K</span></div>
+        <div class="as-author"><div class="as-ava" style="background:linear-gradient(135deg,#fed7aa,#fde68a)">🦁</div><div><div class="as-name">Emeka Obi</div><div class="as-country">🇳🇬 Nigeria · 5 cerita</div></div><span class="as-reads">👁 29.4K</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REQUIREMENTS -->
+<section class="reveal">
+  <div class="sec-tag tag-sun">📋 Syarat Penulis</div>
+  <h2 class="sec-heading">Siapa Yang Boleh<br>Menjadi Penulis?</h2>
+  <p class="sec-sub">NexStoria terbuka untuk semua — tidak kira usia, negara, atau pengalaman. Yang penting: semangat dan cerita yang baik untuk kanak-kanak!</p>
+  <div class="req-grid">
+    <div class="req-card">
+      <div class="rc-title">✅ Syarat Asas</div>
+      <div class="rc-list">
+        <div class="rc-item"><div class="rc-dot" style="background:var(--mint)"></div><span>Berumur 13 tahun ke atas (bawah 18 perlu kebenaran ibu bapa)</span></div>
+        <div class="rc-item"><div class="rc-dot" style="background:var(--mint)"></div><span>Mempunyai akaun NexStoria yang sah</span></div>
+        <div class="rc-item"><div class="rc-dot" style="background:var(--mint)"></div><span>Boleh menulis dalam mana-mana bahasa</span></div>
+        <div class="rc-item"><div class="rc-dot" style="background:var(--mint)"></div><span>Bersetuju dengan garis panduan kandungan kanak-kanak</span></div>
+        <div class="rc-item"><div class="rc-dot" style="background:var(--mint)"></div><span>Cerita mesti asli (bukan plagiat)</span></div>
+      </div>
+    </div>
+    <div class="req-card">
+      <div class="rc-title">📖 Garis Panduan Kandungan</div>
+      <div class="rc-list">
+        <div class="rc-item"><div class="rc-dot" style="background:var(--lav)"></div><span>Cerita sesuai untuk kanak-kanak (3–12 tahun)</span></div>
+        <div class="rc-item"><div class="rc-dot" style="background:var(--lav)"></div><span>Tiada keganasan, bahasa kesat, atau kandungan dewasa</span></div>
+        <div class="rc-item"><div class="rc-dot" style="background:var(--lav)"></div><span>Menggalakkan nilai positif — persahabatan, keberanian, kasih sayang</span></div>
+        <div class="rc-item"><div class="rc-dot" style="background:var(--lav)"></div><span>Boleh berdasarkan cerita rakyat atau rekaan sendiri</span></div>
+        <div class="rc-item"><div class="rc-dot" style="background:var(--lav)"></div><span>Gambar panel jelas dan sesuai untuk kanak-kanak</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APPLICATION FORM -->
+<section id="apply-form" class="reveal">
+  <div class="sec-tag tag-lav">✍️ Borang Permohonan</div>
+  <h2 class="sec-heading" style="text-align:center">Mula Perjalanan Kamu<br>Sebagai Penulis</h2>
+
+  <div class="form-wrap">
+    <!-- step bar -->
+    <div class="form-step-bar">
+      <div class="fsb-item active" id="fsb0"></div>
+      <div class="fsb-item" id="fsb1"></div>
+      <div class="fsb-item" id="fsb2"></div>
+    </div>
+
+    <!-- Step 1: Maklumat Diri -->
+    <div class="form-step active" id="step0">
+      <div class="form-step-title">👤 Maklumat Diri</div>
+      <div class="form-step-sub">Ceritakan sedikit tentang diri kamu supaya kami boleh kenali bakal penulis baru kami!</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Nama Penuh</label><input class="form-input" placeholder="Ahmad Zulkifli"></div>
+        <div class="form-group"><label class="form-label">Nama Pena (Username)</label><input class="form-input" placeholder="@ahmad.writer"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Emel</label><input class="form-input" type="email" placeholder="ahmad@email.com"></div>
+        <div class="form-group"><label class="form-label">Negara</label>
+          <select class="form-select">
+            <option value="">Pilih negara...</option>
+            <option>🇲🇾 Malaysia</option>
+            <option>🇮🇩 Indonesia</option>
+            <option>🇸🇬 Singapore</option>
+            <option>🇯🇵 Japan</option>
+            <option>🇰🇷 Korea</option>
+            <option>🇮🇳 India</option>
+            <option>Lain-lain</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Umur</label>
+        <select class="form-select">
+          <option>13–17 tahun (perlu kebenaran ibu bapa)</option>
+          <option selected>18–25 tahun</option>
+          <option>26–35 tahun</option>
+          <option>36+ tahun</option>
+        </select>
+      </div>
+      <div class="form-btns">
+        <div></div>
+        <button class="fb-next" onclick="goStep(1)">Seterusnya →</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Tentang Cerita -->
+    <div class="form-step" id="step1">
+      <div class="form-step-title">📖 Tentang Cerita Kamu</div>
+      <div class="form-step-sub">Beritahu kami jenis cerita yang ingin kamu hasilkan di NexStoria.</div>
+      <div class="form-group">
+        <label class="form-label">Kategori Kegemaran (Pilih 1–3)</label>
+        <div class="cat-chips">
+          <span class="cat-chip" onclick="toggleChip(this)">🧚 Fairy Tales</span>
+          <span class="cat-chip selected" onclick="toggleChip(this)">🌿 Nature</span>
+          <span class="cat-chip" onclick="toggleChip(this)">🗺️ Adventure</span>
+          <span class="cat-chip" onclick="toggleChip(this)">🐾 Animal</span>
+          <span class="cat-chip" onclick="toggleChip(this)">🌙 Bedtime</span>
+          <span class="cat-chip" onclick="toggleChip(this)">🤝 Friendship</span>
+          <span class="cat-chip" onclick="toggleChip(this)">🧪 Science</span>
+          <span class="cat-chip" onclick="toggleChip(this)">🏛️ History</span>
+          <span class="cat-chip" onclick="toggleChip(this)">😄 Humor</span>
+          <span class="cat-chip" onclick="toggleChip(this)">🌍 Culture</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bahasa Penulisan (Pilih semua yang berkaitan)</label>
+        <div class="lang-chips">
+          <span class="lang-chip selected" onclick="toggleLang(this)">🇲🇾 Melayu</span>
+          <span class="lang-chip" onclick="toggleLang(this)">🇬🇧 English</span>
+          <span class="lang-chip" onclick="toggleLang(this)">🇯🇵 日本語</span>
+          <span class="lang-chip" onclick="toggleLang(this)">🇰🇷 한국어</span>
+          <span class="lang-chip" onclick="toggleLang(this)">🇮🇩 Indonesia</span>
+          <span class="lang-chip" onclick="toggleLang(this)">🇸🇦 العربية</span>
+          <span class="lang-chip" onclick="toggleLang(this)">🇨🇳 中文</span>
+          <span class="lang-chip" onclick="toggleLang(this)">🇮🇳 Hindi</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ceritakan Idea Cerita Pertama Kamu</label>
+        <textarea class="form-textarea" placeholder="Contoh: Cerita tentang seekor rama-rama emas yang terbang ke seluruh hutan untuk mencari kawan baru..."></textarea>
+        <div class="form-note">Minimum 50 perkataan. Ini bukan perjanjian — hanya untuk kami fahami gaya penulisan kamu.</div>
+      </div>
+      <div class="form-btns">
+        <button class="fb-back" onclick="goStep(0)">← Kembali</button>
+        <button class="fb-next" onclick="goStep(2)">Seterusnya →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Pengalaman & Persetujuan -->
+    <div class="form-step" id="step2">
+      <div class="form-step-title">✅ Pengalaman & Persetujuan</div>
+      <div class="form-step-sub">Satu langkah terakhir! Beritahu kami sedikit tentang pengalaman kamu.</div>
+      <div class="form-group">
+        <label class="form-label">Pengalaman Menulis</label>
+        <select class="form-select">
+          <option>🌱 Baru bermula — ini pertama kali saya menulis cerita</option>
+          <option selected>📝 Ada sedikit pengalaman — pernah tulis untuk kesenangan</option>
+          <option>📚 Berpengalaman — pernah terbitkan di blog atau platform lain</option>
+          <option>✍️ Penulis profesional — ada portfolio penerbitan</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bagaimana Kamu Tahu Tentang NexStoria?</label>
+        <select class="form-select">
+          <option>Media sosial (Instagram/TikTok/X)</option>
+          <option>Kawan atau keluarga</option>
+          <option>Google / Carian web</option>
+          <option>Saya pembaca NexStoria</option>
+          <option>Lain-lain</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Sebarang Soalan atau Nota Tambahan (Pilihan)</label>
+        <textarea class="form-textarea" style="min-height:70px" placeholder="Ada soalan? Nak beritahu kami sesuatu yang istimewa tentang cerita kamu?"></textarea>
+      </div>
+      <div class="form-group">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:0.76rem;color:var(--soft);">
+          <input type="checkbox" id="agree-check" style="margin-top:3px;accent-color:var(--lav);">
+          <span>Saya bersetuju dengan <a href="#" style="color:var(--lav)">Garis Panduan Penulis</a> dan <a href="#" style="color:var(--lav)">Terma Perkhidmatan</a> NexStoria. Saya faham semua cerita akan disemak sebelum diterbitkan.</span>
+        </label>
+      </div>
+      <div class="form-btns">
+        <button class="fb-back" onclick="goStep(1)">← Kembali</button>
+        <button class="fb-next" onclick="submitForm()" style="background:linear-gradient(135deg,var(--mint),#059669);">🚀 Hantar Permohonan</button>
+      </div>
+    </div>
+
+    <!-- Success -->
+    <div class="success-screen" id="success-screen">
+      <span class="ss-icon">🎉</span>
+      <div class="ss-title">Permohonan Dihantar!</div>
+      <div class="ss-sub">Tahniah! Permohonan kamu sebagai penulis NexStoria telah diterima. Tim kami akan semak dalam masa <strong>24 jam</strong>.</div>
+      <div class="ss-steps">
+        <div class="ss-step"><div class="ss-dot sd-done">✓</div><div><strong>Permohonan dihantar</strong> — Kami terima maklumat kamu</div></div>
+        <div class="ss-step"><div class="ss-dot sd-wait">⏳</div><div><strong>Semakan 24 jam</strong> — Tim kami akan semak cerita idea kamu</div></div>
+        <div class="ss-step"><div class="ss-dot sd-lock">📧</div><div><strong>Keputusan via emel</strong> — Kami akan emailkan hasilnya</div></div>
+        <div class="ss-step"><div class="ss-dot sd-lock">✍️</div><div><strong>Akses Writer Dashboard</strong> — Mula tulis cerita pertama kamu!</div></div>
+      </div>
+      <button class="ss-btn">← Kembali ke Profil</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="reveal" style="text-align:center">
+  <div class="sec-tag tag-coral" style="display:inline-block">❓ Soalan Lazim</div>
+  <h2 class="sec-heading">Ada Soalan?</h2>
+  <div class="faq-list">
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Adakah saya perlu ada pengalaman menulis untuk mendaftar? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Tidak sama sekali! NexStoria terbuka untuk semua — dari penulis baru hingga penulis berpengalaman. Yang penting adalah semangat dan idea cerita yang baik untuk kanak-kanak. Kami ada panduan lengkap untuk membantu kamu bermula.</div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Berapa lama proses semakan permohonan? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Biasanya dalam masa 24 jam pada hari bekerja. Kami akan emailkan keputusan kepada kamu — sama ada diluluskan atau dengan cadangan untuk diperbaiki.</div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Boleh saya kekalkan akaun pembaca selepas jadi penulis? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Ya! Akaun kamu akan naik taraf kepada akaun Penulis — semua data pembacaan, token, bintang, dan lencana kamu dikekalkan sepenuhnya. Kamu boleh terus membaca cerita orang lain sambil menulis cerita sendiri.</div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Adakah saya perlu ada gambar/ilustrasi untuk cerita? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Ya, setiap panel cerita memerlukan gambar. Kamu boleh lukis sendiri, guna gambar AI-generated (yang dibenarkan untuk tujuan komersial), atau berkolaborasi dengan illustrator lain di NexStoria. Kami ada panduan lengkap tentang saiz dan format gambar yang diterima.</div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">Bagaimana sistem token dan pendapatan berfungsi untuk penulis? <span class="faq-arrow">▾</span></div>
+      <div class="faq-a"><div class="faq-a-inner">Pembaca boleh menghantar tip token kepada penulis terus dari halaman cerita. Token terkumpul boleh ditukar kepada kredit platform atau wang tunai apabila sistem monetisasi penuh dilancarkan pada Fasa 2. Maklumat lanjut akan dikongsikan semasa onboarding penulis.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner reveal">
+  <div class="cta-inner">
+    <div class="cta-bg"></div>
+    <div class="cta-title">Siap Untuk Mula? ✍️</div>
+    <div class="cta-sub">Sertai 1,240+ penulis dari seluruh dunia. Cerita kamu menunggu untuk dibaca.</div>
+    <button class="cta-btn" onclick="scrollToForm()">✍️ Mohon Jadi Penulis Sekarang</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div style="margin-bottom:0.75rem">
+    <a href="#">Tentang Kami</a> · <a href="#">Panduan Penulis</a> · <a href="#">Dasar Privasi</a> · <a href="#">Hubungi Kami</a>
+  </div>
+  © 2025 NexStoria · <em>Where the Next Generation of Stories Begins.</em>
+</footer>
+
+<script>
+// ── REVEAL ON SCROLL ──
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach((e,i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 60);
+      revObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
+// ── FORM STEPS ──
+let curStep = 0;
+function goStep(n) {
+  document.getElementById('step' + curStep).classList.remove('active');
+  document.getElementById('fsb' + curStep).classList.remove('active');
+  document.getElementById('fsb' + curStep).classList.add('done');
+  curStep = n;
+  document.getElementById('step' + curStep).classList.add('active');
+  document.getElementById('fsb' + curStep).classList.add('active');
+  document.getElementById('apply-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function submitForm() {
+  const agree = document.getElementById('agree-check');
+  if (!agree.checked) { alert('Sila tandakan persetujuan terlebih dahulu.'); return; }
+  document.getElementById('step' + curStep).classList.remove('active');
+  document.querySelectorAll('.fsb-item').forEach(f => { f.classList.add('done'); f.classList.remove('active'); });
+  document.getElementById('success-screen').style.display = 'block';
+  document.getElementById('apply-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── CHIPS ──
+function toggleChip(el) {
+  const selected = document.querySelectorAll('.cat-chip.selected');
+  if (!el.classList.contains('selected') && selected.length >= 3) return;
+  el.classList.toggle('selected');
+}
+function toggleLang(el) { el.classList.toggle('selected'); }
+
+// ── FAQ ──
+function toggleFaq(item) {
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(f => {
+    f.classList.remove('open');
+    f.querySelector('.faq-a').style.maxHeight = '0';
+  });
+  if (!isOpen) {
+    item.classList.add('open');
+    item.querySelector('.faq-a').style.maxHeight = '300px';
+  }
+}
+
+// ── SCROLL ──
+function scrollToForm() {
+  document.getElementById('apply-form').scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
